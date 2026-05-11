@@ -1,0 +1,98 @@
+@import "tailwindcss";
+
+@theme inline {
+  --color-mantle: #181825;
+  --color-base: #1e1e2e;
+  --color-surface0: #313244;
+  --color-surface1: #45475a;
+  --color-overlay0: #6c7086;
+  --color-text: #cdd6f4;
+  --color-subtext0: #a6adc8;
+  --color-blue: #89b4fa;
+  --color-green: #a6e3a1;
+  --color-yellow: #f9e2af;
+  --color-red: #f38ba8;
+  --color-mauve: #cba6f7;
+  --color-teal: #94e2d5;
+  --color-peach: #fab387;
+  --color-sky: #74c7ec;
+  --color-pink: #f5c2e7;
+  --color-flamingo: #f2cdcd;
+  --font-mono: "JetBrains Mono", "Fira Code", "Cascadia Code", monospace;
+}
+
+:root {
+  --background: #1e1e2e;
+  --foreground: #cdd6f4;
+  --sidebar: #181825;
+  --accent: #a6e3a1;
+  --surface: #313244;
+  --border: #45475a;
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--surface) transparent;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-mono);
+}
+
+/* Syntax highlighting overrides for Prism/Monaco in dark mode */
+.token.keyword { color: #cba6f7; }
+.token.function { color: #89b4fa; }
+.token.string { color: #a6e3a1; }
+.token.number { color: #fab387; }
+.token.comment { color: #6c7086; font-style: italic; }
+.token.operator { color: #f5c2e7; }
+.token.builtin { color: #74c7ec; }
+.token.type { color: #f9e2af; }
+
+/* Markdown content styling */
+.prose-c {
+  max-width: none;
+}
+.prose-c h1 { color: #cdd6f4; font-size: 1.75rem; font-weight: 700; margin: 1.5rem 0 1rem; }
+.prose-c h2 { color: #cdd6f4; font-size: 1.35rem; font-weight: 600; margin: 1.25rem 0 0.75rem; border-bottom: 1px solid #313244; padding-bottom: 0.5rem; }
+.prose-c h3 { color: #cdd6f4; font-size: 1.1rem; font-weight: 600; margin: 1rem 0 0.5rem; }
+.prose-c p { margin: 0.75rem 0; line-height: 1.7; color: #a6adc8; }
+.prose-c code { background: #313244; padding: 0.15rem 0.4rem; border-radius: 4px; font-size: 0.9em; font-family: var(--font-mono); }
+.prose-c pre { background: #181825; padding: 1rem; border-radius: 8px; overflow-x: auto; border: 1px solid #313244; margin: 1rem 0; }
+.prose-c pre code { background: none; padding: 0; }
+.prose-c ul, .prose-c ol { padding-left: 1.5rem; margin: 0.5rem 0; color: #a6adc8; }
+.prose-c li { margin: 0.25rem 0; }
+.prose-c blockquote { border-left: 3px solid #a6e3a1; padding-left: 1rem; color: #6c7086; margin: 1rem 0; font-style: italic; }
+.prose-c table { width: 100%; border-collapse: collapse; margin: 1rem 0; }
+.prose-c th, .prose-c td { border: 1px solid #313244; padding: 0.5rem 0.75rem; text-align: left; }
+.prose-c th { background: #181825; color: #cdd6f4; font-weight: 600; }
+.prose-c a { color: #89b4fa; text-decoration: underline; }
+.prose-c a:hover { color: #74c7ec; }
+.prose-c strong { color: #cdd6f4; font-weight: 600; }
+
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.animate-fade-in {
+  animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+  from { opacity: 0; transform: translateX(-12px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+.animate-slide-in {
+  animation: slideIn 0.25s ease-out;
+}
+
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: 0 0 8px rgba(166, 227, 161, 0.3); }
+  50% { box-shadow: 0 0 20px rgba(166, 227, 161, 0.6); }
+}
+.animate-pulse-glow {
+  animation: pulse-glow 2s ease-in-out infinite;
+}

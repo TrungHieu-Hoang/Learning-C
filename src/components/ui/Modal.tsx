@@ -1,0 +1,44 @@
+'use client'
+import React, { useEffect, useRef } from 'react'
+
+interface ModalProps {
+  isOpen: boolean
+  onClose: () => void
+  title: string
+  children: React.ReactNode
+}
+
+export function Modal({ isOpen, onClose, title, children }: ModalProps) {
+  const overlayRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    const handleEsc = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose()
+    }
+    if (isOpen) document.addEventListener('keydown', handleEsc)
+    return () => document.removeEventListener('keydown', handleEsc)
+  }, [isOpen, onClose])
+
+  if (!isOpen) return null
+
+  return (
+    <div
+      ref={overlayRef}
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm"
+      onClick={(e) => e.target === overlayRef.current && onClose()}
+    >
+      <div className="bg-[#1e1e2e] border border-[#313244] rounded-xl w-full max-w-lg mx-4 animate-fade-in shadow-2xl">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-[#313244]">
+          <h2 className="text-lg font-semibold text-[#cdd6f4]">{title}</h2>
+          <button
+            onClick={onClose}
+            className="text-[#6c7086] hover:text-[#cdd6f4] transition-colors text-xl leading-none"
+          >
+            &times;
+          </button>
+        </div>
+        <div className="px-6 py-4">{children}</div>
+      </div>
+    </div>
+  )
+}
