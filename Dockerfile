@@ -38,4 +38,4 @@ RUN npm install prisma@5 --no-save
 
 EXPOSE 3000
 
-CMD npx prisma db push && node server.js
+CMD npx prisma db push --skip-generate && node server.js
