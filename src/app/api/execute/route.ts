@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { execSync } from 'node:child_process'
-import { writeFile, unlink, rmdir, mkdtemp } from 'node:fs/promises'
+import { writeFile, unlink, rm, mkdtemp } from 'node:fs/promises'
 import { join } from 'node:path'
 import { tmpdir } from 'node:os'
 
@@ -98,6 +98,6 @@ export async function POST(req: NextRequest) {
     if (sourcePath) unlink(sourcePath).catch(() => {})
     if (binaryPath) unlink(binaryPath).catch(() => {})
     if (stdinPath) unlink(stdinPath).catch(() => {})
-    if (tmpDir) unlink(tmpDir).catch(() => {})
+    if (tmpDir) rm(tmpDir, { recursive: true }).catch(() => {})
   }
 }
