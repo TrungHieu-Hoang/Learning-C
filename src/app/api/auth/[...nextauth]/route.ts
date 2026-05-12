@@ -1,7 +1,8 @@
 import NextAuth, { type DefaultSession } from 'next-auth'
-import CredentialsProvider from 'next-auth/providers/credentials'
+import { PrismaAdapter } from '@auth/prisma-adapter'
 import GoogleProvider from 'next-auth/providers/google'
 import GitHubProvider from 'next-auth/providers/github'
+import { prisma } from '@/lib/prisma'
 
 declare module 'next-auth' {
   interface Session {
@@ -10,21 +11,8 @@ declare module 'next-auth' {
 }
 
 const handler = NextAuth({
+  adapter: PrismaAdapter(prisma),
   providers: [
-    CredentialsProvider({
-      name: 'Credentials',
-      credentials: {
-        email: { label: 'Email', type: 'email' },
-        password: { label: 'Password', type: 'password' },
-      },
-      async authorize(credentials) {
-        // TODO: Verify against database
-        if (credentials?.email === 'demo@example.com' && credentials?.password === 'demo') {
-          return { id: '1', name: 'Demo User', email: 'demo@example.com' }
-        }
-        return null
-      },
-    }),
     ...(process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET
       ? [
           GoogleProvider({

@@ -2,6 +2,7 @@
 import React from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
+import { AuthButton } from '@/components/auth/AuthButton'
 
 const navItems = [
   { href: '/learn', label: 'Học tập' },
@@ -38,6 +39,7 @@ export function Navbar() {
         </div>
 
         <div className="flex items-center gap-3">
+          <AuthButton />
           <Link
             href="/settings"
             className="text-[#6c7086] hover:text-[#cdd6f4] transition-colors p-2"

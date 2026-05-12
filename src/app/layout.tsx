@@ -4,6 +4,7 @@ import './globals.css'
 import { Navbar } from '@/components/layout/Navbar'
 import { KeepAlive } from '@/components/layout/KeepAlive'
 import { ToastProvider } from '@/components/ui/Toast'
+import { SessionProvider } from '@/components/auth/SessionProvider'
 
 const jetbrainsMono = JetBrains_Mono({
   subsets: ['latin', 'vietnamese'],
@@ -19,11 +20,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="vi" className={`${jetbrainsMono.variable}`}>
       <body className="bg-[#1e1e2e] text-[#cdd6f4] min-h-screen font-mono">
-        <ToastProvider>
-          <KeepAlive />
-          <Navbar />
-          <main className="flex-1">{children}</main>
-        </ToastProvider>
+        <SessionProvider>
+          <ToastProvider>
+            <KeepAlive />
+            <Navbar />
+            <main className="flex-1">{children}</main>
+          </ToastProvider>
+        </SessionProvider>
       </body>
     </html>
   )
