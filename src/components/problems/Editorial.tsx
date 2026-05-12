@@ -13,8 +13,8 @@ export function Editorial({ solution, explanation, isUnlocked, hoursUntilUnlock 
   if (!isUnlocked) {
     return (
       <Card className="p-6 text-center">
-        <p className="text-[#6c7086] font-mono text-sm mb-2">🔒 Editorial bị khóa</p>
-        <p className="text-[#6c7086] font-mono text-xs">
+        <p className="text-overlay0 font-mono text-sm mb-2">🔒 Editorial bị khóa</p>
+        <p className="text-overlay0 font-mono text-xs">
           Mở khóa sau khi AC hoặc {hoursUntilUnlock}h nữa
         </p>
       </Card>
@@ -24,13 +24,13 @@ export function Editorial({ solution, explanation, isUnlocked, hoursUntilUnlock 
   return (
     <div className="space-y-4">
       <Card className="p-4">
-        <h3 className="text-[#cdd6f4] font-medium mb-2 font-mono">Giải thích</h3>
-        <p className="text-[#a6adc8] text-sm leading-relaxed">{explanation}</p>
+        <h3 className="text-text font-medium mb-2 font-mono">Giải thích</h3>
+        <p className="text-subtext0 text-sm leading-relaxed">{explanation}</p>
       </Card>
       <Card className="p-4">
-        <h3 className="text-[#cdd6f4] font-medium mb-2 font-mono">Solution</h3>
-        <pre className="bg-[#1e1e2e] p-4 rounded-lg overflow-x-auto text-sm font-mono">
-          <code className="text-[#a6e3a1]">{solution}</code>
+        <h3 className="text-text font-medium mb-2 font-mono">Solution</h3>
+        <pre className="bg-base p-4 rounded-lg overflow-x-auto text-sm font-mono">
+          <code className="text-green">{solution}</code>
         </pre>
       </Card>
     </div>

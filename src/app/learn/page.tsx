@@ -28,7 +28,7 @@ export default function LearnPage() {
     <div className="max-w-5xl mx-auto px-4 py-8">
       <div className="mb-8 animate-fade-in">
         <h1 className="text-2xl font-bold font-mono mb-2">Lộ trình học C</h1>
-        <p className="text-[#a6adc8] text-sm font-mono mb-4">
+        <p className="text-subtext0 text-sm font-mono mb-4">
           {modules.length} module từ cơ bản đến nâng cao
         </p>
         <ProgressBar value={completed.length} max={modules.length} size="lg" />

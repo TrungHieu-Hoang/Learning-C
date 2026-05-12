@@ -3,6 +3,7 @@ import React, { useRef, useCallback } from 'react'
 import dynamic from 'next/dynamic'
 import type { OnMount } from '@monaco-editor/react'
 import { useEditorStore } from '@/store/editorStore'
+import { useThemeStore } from '@/store/themeStore'
 import { Button } from '@/components/ui/Button'
 
 const Monaco = dynamic(() => import('@monaco-editor/react'), { ssr: false })
@@ -26,7 +27,9 @@ export function CodeEditor({
   showActions = true,
   height = '100%',
 }: CodeEditorProps) {
-  const { code, setCode, fontSize, theme, isRunning, isSubmitting } = useEditorStore()
+  const { code, setCode, fontSize, isRunning, isSubmitting } = useEditorStore()
+  const appTheme = useThemeStore((s) => s.theme)
+  const monacoTheme = appTheme === 'latte' ? 'light' : 'vs-dark'
   const editorRef = useRef<Parameters<OnMount>[0] | null>(null)
 
   const handleMount: OnMount = useCallback((editor) => {
@@ -46,8 +49,8 @@ export function CodeEditor({
 
   return (
     <div className="flex flex-col h-full" onKeyDown={handleKeyDown}>
-      <div className="flex items-center justify-between px-3 py-1.5 bg-[#181825] border-b border-[#313244]">
-        <span className="text-xs text-[#6c7086] font-mono">main.c</span>
+      <div className="flex items-center justify-between px-3 py-1.5 bg-mantle border-b border-surface0">
+        <span className="text-xs text-overlay0 font-mono">main.c</span>
         {showActions && (
           <div className="flex items-center gap-1.5">
             {onHint && (
@@ -77,7 +80,7 @@ export function CodeEditor({
         <Monaco
           height={height === '100%' ? undefined : height}
           defaultLanguage="c"
-          theme={theme}
+          theme={monacoTheme}
           value={code}
           onChange={(v) => v && setCode(v)}
           onMount={handleMount}

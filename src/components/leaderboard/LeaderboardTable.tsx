@@ -23,7 +23,7 @@ export function LeaderboardTable({ entries, type }: LeaderboardTableProps) {
   if (entries.length === 0) {
     return (
       <div className="text-center py-12">
-        <p className="text-[#6c7086] font-mono text-sm">Chưa có dữ liệu</p>
+        <p className="text-overlay0 font-mono text-sm">Chưa có dữ liệu</p>
       </div>
     )
   }
@@ -32,7 +32,7 @@ export function LeaderboardTable({ entries, type }: LeaderboardTableProps) {
     <div className="overflow-x-auto">
       <table className="w-full text-sm font-mono">
         <thead>
-          <tr className="text-[#6c7086] text-xs border-b border-[#313244]">
+          <tr className="text-overlay0 text-xs border-b border-surface0">
             <th className="px-4 py-3 text-left w-12">#</th>
             <th className="px-4 py-3 text-left">User</th>
             <th className="px-4 py-3 text-right">Rank</th>
@@ -45,9 +45,9 @@ export function LeaderboardTable({ entries, type }: LeaderboardTableProps) {
           {entries.map((entry) => (
             <tr
               key={entry.userId}
-              className="border-b border-[#313244] hover:bg-[#313244]/30 transition-colors"
+              className="border-b border-surface0 hover:bg-surface0/30 transition-colors"
             >
-              <td className="px-4 py-3 text-[#6c7086]">
+              <td className="px-4 py-3 text-overlay0">
                 {entry.rank <= 3 ? (
                   <span className="text-lg">{['🏆', '🥈', '🥉'][entry.rank - 1]}</span>
                 ) : (
@@ -55,22 +55,22 @@ export function LeaderboardTable({ entries, type }: LeaderboardTableProps) {
                 )}
               </td>
               <td className="px-4 py-3">
-                <Link href={`/profile/${entry.userId}`} className="text-[#cdd6f4] hover:text-[#a6e3a1] transition-colors">
+                <Link href={`/profile/${entry.userId}`} className="text-text hover:text-green transition-colors">
                   {entry.username}
                 </Link>
               </td>
               <td className="px-4 py-3 text-right">
                 <RankBadge xp={entry.xp} size="sm" />
               </td>
-              <td className="px-4 py-3 text-right text-[#f9e2af]">
+              <td className="px-4 py-3 text-right text-yellow">
                 {type === 'weekly' ? entry.xpThisWeek.toLocaleString() : entry.xp.toLocaleString()}
               </td>
-              <td className="px-4 py-3 text-right text-[#a6adc8]">{entry.problemsSolved}</td>
+              <td className="px-4 py-3 text-right text-subtext0">{entry.problemsSolved}</td>
               <td className="px-4 py-3 text-right">
                 {entry.streak > 0 ? (
-                  <span className="text-[#a6e3a1]">🔥 {entry.streak}</span>
+                  <span className="text-green">🔥 {entry.streak}</span>
                 ) : (
-                  <span className="text-[#6c7086]">-</span>
+                  <span className="text-overlay0">-</span>
                 )}
               </td>
             </tr>

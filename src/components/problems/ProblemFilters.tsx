@@ -26,13 +26,13 @@ export function ProblemFilters({
         placeholder="Tìm kiếm bài tập..."
         value={searchQuery}
         onChange={(e) => onSearchChange(e.target.value)}
-        className="flex-1 min-w-[200px] bg-[#181825] border border-[#313244] rounded-lg px-4 py-2 text-sm font-mono text-[#cdd6f4] placeholder-[#6c7086] focus:outline-none focus:border-[#a6e3a1] transition-colors"
+        className="flex-1 min-w-[200px] bg-mantle border border-surface0 rounded-lg px-4 py-2 text-sm font-mono text-text placeholder-overlay0 focus:outline-none focus:border-green transition-colors"
       />
 
       <select
         value={selectedDifficulty}
         onChange={(e) => onDifficultyChange(e.target.value as Difficulty | 'all')}
-        className="bg-[#181825] border border-[#313244] rounded-lg px-3 py-2 text-sm font-mono text-[#cdd6f4] focus:outline-none focus:border-[#a6e3a1] transition-colors"
+        className="bg-mantle border border-surface0 rounded-lg px-3 py-2 text-sm font-mono text-text focus:outline-none focus:border-green transition-colors"
       >
         <option value="all">All Difficulties</option>
         <option value="easy">Easy</option>
@@ -43,7 +43,7 @@ export function ProblemFilters({
       <select
         value={selectedSource}
         onChange={(e) => onSourceChange(e.target.value)}
-        className="bg-[#181825] border border-[#313244] rounded-lg px-3 py-2 text-sm font-mono text-[#cdd6f4] focus:outline-none focus:border-[#a6e3a1] transition-colors"
+        className="bg-mantle border border-surface0 rounded-lg px-3 py-2 text-sm font-mono text-text focus:outline-none focus:border-green transition-colors"
       >
         <option value="all">All Sources</option>
         <option value="hackerrank">HackerRank</option>

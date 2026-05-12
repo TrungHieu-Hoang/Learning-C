@@ -19,9 +19,9 @@ const modules = [
 
 export function Sidebar() {
   return (
-    <aside className="w-64 bg-[#181825] border-r border-[#313244] h-[calc(100vh-3.5rem)] overflow-y-auto hidden lg:block shrink-0">
+    <aside className="w-64 bg-mantle border-r border-surface0 h-[calc(100vh-3.5rem)] overflow-y-auto hidden lg:block shrink-0">
       <div className="p-4">
-        <h3 className="text-xs font-semibold text-[#6c7086] uppercase tracking-wider mb-3 font-mono">
+        <h3 className="text-xs font-semibold text-overlay0 uppercase tracking-wider mb-3 font-mono">
           Lộ trình học
         </h3>
         <nav className="space-y-1">
@@ -29,9 +29,9 @@ export function Sidebar() {
             <Link
               key={mod.id}
               href={`/learn/${mod.id}`}
-              className="block px-3 py-2 rounded-lg text-sm text-[#a6adc8] hover:bg-[#313244] hover:text-[#cdd6f4] transition-colors font-mono"
+              className="block px-3 py-2 rounded-lg text-sm text-subtext0 hover:bg-surface0 hover:text-text transition-colors font-mono"
             >
-              <span className="text-[#6c7086] text-xs">{mod.title.split(' —')[0]}</span>
+              <span className="text-overlay0 text-xs">{mod.title.split(' —')[0]}</span>
               <br />
               <span className="text-xs">{mod.title.split('— ')[1] || mod.title}</span>
             </Link>

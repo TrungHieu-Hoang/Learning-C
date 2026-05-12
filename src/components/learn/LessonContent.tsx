@@ -11,7 +11,7 @@ interface LessonContentProps {
 export function LessonContent({ content, title }: LessonContentProps) {
   return (
     <div className="prose-c p-6 overflow-y-auto h-full">
-      <h1 className="text-2xl font-bold text-[#cdd6f4] mb-6 font-mono">{title}</h1>
+      <h1 className="text-2xl font-bold text-text mb-6 font-mono">{title}</h1>
       <div className="max-w-none">
         <ReactMarkdown remarkPlugins={[remarkGfm]}>{content}</ReactMarkdown>
       </div>

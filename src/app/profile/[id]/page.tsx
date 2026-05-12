@@ -42,7 +42,7 @@ export default function ProfilePage() {
         {/* Profile header */}
         <Card className="p-6 mb-6">
           <div className="flex items-center gap-4 mb-4">
-            <div className="w-16 h-16 rounded-full bg-[#313244] flex items-center justify-center text-2xl">
+            <div className="w-16 h-16 rounded-full bg-surface0 flex items-center justify-center text-2xl">
               {mockUser.avatar ? (
                 <img src={mockUser.avatar} alt="" className="w-full h-full rounded-full" />
               ) : (
@@ -50,15 +50,15 @@ export default function ProfilePage() {
               )}
             </div>
             <div>
-              <h1 className="text-xl font-bold font-mono text-[#cdd6f4]">{mockUser.username}</h1>
+              <h1 className="text-xl font-bold font-mono text-text">{mockUser.username}</h1>
               <div className="flex items-center gap-2 mt-1">
                 <RankBadge xp={mockUser.xp} />
-                <span className="text-[#6c7086] text-xs font-mono">· {mockUser.memberSince}</span>
+                <span className="text-overlay0 text-xs font-mono">· {mockUser.memberSince}</span>
               </div>
             </div>
           </div>
-          <div className="text-sm text-[#6c7086] font-mono">
-            <strong className="text-[#f9e2af)">{mockUser.xp.toLocaleString()}</strong> Total XP
+          <div className="text-sm text-overlay0 font-mono">
+            <strong className="text-yellow">{mockUser.xp.toLocaleString()}</strong> Total XP
           </div>
         </Card>
 
@@ -73,24 +73,24 @@ export default function ProfilePage() {
         <div className="grid md:grid-cols-2 gap-6">
           {/* Streak */}
           <Card className="p-5">
-            <h2 className="text-sm font-medium text-[#cdd6f4] mb-3 font-mono">Hoạt động</h2>
+            <h2 className="text-sm font-medium text-text mb-3 font-mono">Hoạt động</h2>
             <StreakDisplay streak={mockUser.streak} longestStreak={30} />
           </Card>
 
           {/* Badges */}
           <Card className="p-5">
-            <h2 className="text-sm font-medium text-[#cdd6f4] mb-3 font-mono">Huy hiệu</h2>
+            <h2 className="text-sm font-medium text-text mb-3 font-mono">Huy hiệu</h2>
             <BadgeDisplay badges={mockBadges} />
           </Card>
         </div>
 
         {/* Recent submissions */}
         <Card className="p-5 mt-6">
-          <h2 className="text-sm font-medium text-[#cdd6f4] mb-3 font-mono">Lịch sử nộp bài</h2>
+          <h2 className="text-sm font-medium text-text mb-3 font-mono">Lịch sử nộp bài</h2>
           <div className="overflow-x-auto">
             <table className="w-full text-sm font-mono">
               <thead>
-                <tr className="text-[#6c7086] text-xs border-b border-[#313244]">
+                <tr className="text-overlay0 text-xs border-b border-surface0">
                   <th className="px-3 py-2 text-left">Bài tập</th>
                   <th className="px-3 py-2 text-left">Status</th>
                   <th className="px-3 py-2 text-right">XP</th>
@@ -99,22 +99,22 @@ export default function ProfilePage() {
               </thead>
               <tbody>
                 {recentSubmissions.map((s, i) => (
-                  <tr key={i} className="border-b border-[#313244]">
-                    <td className="px-3 py-2 text-[#a6adc8]">{s.problem}</td>
+                  <tr key={i} className="border-b border-surface0">
+                    <td className="px-3 py-2 text-subtext0">{s.problem}</td>
                     <td className="px-3 py-2">
-                      <span className={s.status === 'AC' ? 'text-[#a6e3a1]' : 'text-[#f38ba8]'}>
+                      <span className={s.status === 'AC' ? 'text-green' : 'text-red'}>
                         {s.status}
                       </span>
                     </td>
-                    <td className="px-3 py-2 text-right text-[#f9e2af]">+{s.xp}</td>
-                    <td className="px-3 py-2 text-right text-[#6c7086]">{s.date}</td>
+                    <td className="px-3 py-2 text-right text-yellow">+{s.xp}</td>
+                    <td className="px-3 py-2 text-right text-overlay0">{s.date}</td>
                   </tr>
                 ))}
               </tbody>
             </table>
           </div>
           {recentSubmissions.length === 0 && (
-            <p className="text-[#6c7086] font-mono text-sm italic text-center py-4">
+            <p className="text-overlay0 font-mono text-sm italic text-center py-4">
               Chưa có lịch sử nộp bài
             </p>
           )}

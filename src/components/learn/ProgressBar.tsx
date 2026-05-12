@@ -15,14 +15,14 @@ export function ProgressBar({ value, max, showLabel = true, size = 'md', classNa
 
   return (
     <div className={`flex items-center gap-2 ${className}`}>
-      <div className={`flex-1 bg-[#313244] rounded-full ${heights[size]}`}>
+      <div className={`flex-1 bg-surface0 rounded-full ${heights[size]}`}>
         <div
-          className={`bg-[#a6e3a1] ${heights[size]} rounded-full transition-all duration-700 ease-out`}
+          className={`bg-green ${heights[size]} rounded-full transition-all duration-700 ease-out`}
           style={{ width: `${pct}%` }}
         />
       </div>
       {showLabel && (
-        <span className="text-xs font-mono text-[#6c7086] shrink-0">
+        <span className="text-xs font-mono text-overlay0 shrink-0">
           {value}/{max}
         </span>
       )}

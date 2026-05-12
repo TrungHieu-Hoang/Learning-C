@@ -1,7 +1,7 @@
 export function Spinner({ className = '' }: { className?: string }) {
   return (
     <svg
-      className={`animate-spin h-5 w-5 text-[#a6e3a1] ${className}`}
+      className={`animate-spin h-5 w-5 text-green ${className}`}
       viewBox="0 0 24 24"
       fill="none"
     >

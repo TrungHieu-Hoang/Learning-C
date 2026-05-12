@@ -5,6 +5,7 @@ import { Navbar } from '@/components/layout/Navbar'
 import { KeepAlive } from '@/components/layout/KeepAlive'
 import { ToastProvider } from '@/components/ui/Toast'
 import { SessionProvider } from '@/components/auth/SessionProvider'
+import { ThemeProvider } from './ThemeProvider'
 
 const jetbrainsMono = JetBrains_Mono({
   subsets: ['latin', 'vietnamese'],
@@ -19,14 +20,16 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="vi" className={`${jetbrainsMono.variable}`}>
-      <body className="bg-[#1e1e2e] text-[#cdd6f4] min-h-screen font-mono">
-        <SessionProvider>
-          <ToastProvider>
-            <KeepAlive />
-            <Navbar />
-            <main className="flex-1">{children}</main>
-          </ToastProvider>
-        </SessionProvider>
+      <body className="bg-base text-text min-h-screen font-mono">
+        <ThemeProvider>
+          <SessionProvider>
+            <ToastProvider>
+              <KeepAlive />
+              <Navbar />
+              <main className="flex-1">{children}</main>
+            </ToastProvider>
+          </SessionProvider>
+        </ThemeProvider>
       </body>
     </html>
   )

@@ -15,7 +15,7 @@ export function RankBadge({ xp, size = 'md' }: RankBadgeProps) {
   return (
     <span className={`inline-flex items-center gap-1.5`} title={`${rank.name} (${xp} XP)`}>
       <span className={icons[size]}>{rank.icon}</span>
-      <span className={`${sizes[size]} font-mono text-[#a6adc8]`}>{rank.name}</span>
+      <span className={`${sizes[size]} font-mono text-subtext0`}>{rank.name}</span>
     </span>
   )
 }

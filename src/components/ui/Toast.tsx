@@ -29,9 +29,9 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
   }, [])
 
   const colors = {
-    success: 'bg-[#a6e3a1] text-[#1e1e2e]',
-    error: 'bg-[#f38ba8] text-[#1e1e2e]',
-    info: 'bg-[#313244] text-[#cdd6f4] border border-[#45475a]',
+    success: 'bg-green text-base',
+    error: 'bg-red text-base',
+    info: 'bg-surface0 text-text border border-surface1',
   }
 
   return (

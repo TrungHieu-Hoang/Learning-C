@@ -11,27 +11,23 @@ import { SubmissionHistory } from '@/components/submissions/SubmissionHistory'
 import { Button } from '@/components/ui/Button'
 import { useJudge } from '@/hooks/useJudge'
 import { useEditorStore } from '@/store/editorStore'
+import { problemsDetail } from '@/data/problems'
 import type { Difficulty, Submission } from '@/types'
 
 const difficultyColors: Record<Difficulty, string> = {
-  easy: 'text-[#a6e3a1] bg-[#a6e3a1]/10',
-  medium: 'text-[#f9e2af] bg-[#f9e2af]/10',
-  hard: 'text-[#f38ba8] bg-[#f38ba8]/10',
+  easy: 'text-green bg-green/10',
+  medium: 'text-yellow bg-yellow/10',
+  hard: 'text-red bg-red/10',
 }
 
-interface ProblemData {
-  id: string
-  title: string
-  difficulty: Difficulty
-  description: string
-  inputFormat: string
-  constraints: string
-  sampleInput: string
-  sampleOutput: string
-  starterCode: string
-  solution: string
-  explanation: string
-  testCases: { id: string; input: string; expectedOutput: string; isHidden: boolean; weight: number }[]
+function saveProblemStatus(id: string, status: 'solved' | 'attempted') {
+  try {
+    const map = JSON.parse(localStorage.getItem('problemStatus') || '{}')
+    // Only upgrade: attempted → solved, never downgrade
+    if (map[id] === 'solved' && status === 'attempted') return
+    map[id] = status
+    localStorage.setItem('problemStatus', JSON.stringify(map))
+  } catch {}
 }
 
 export default function ProblemPage() {
@@ -42,29 +38,16 @@ export default function ProblemPage() {
   const [panelTab, setPanelTab] = useState<'result' | 'history'>('result')
   const [submissions, setSubmissions] = useState<Submission[]>([])
   const [subsLoading, setSubsLoading] = useState(false)
-  const [problem, setProblem] = useState<ProblemData | null>(null)
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState('')
   const { data: session } = useSession()
   const { handleRun, handleTestCases, testResults, showTestPanel, isRunning } = useJudge()
   const { code } = useEditorStore()
   const reset = useEditorStore((s) => s.reset)
 
+  const problem = problemsDetail.get(id) ?? null
+
   useEffect(() => {
-    if (!id) return
-    setLoading(true)
-    fetch(`/api/problems/${id}`)
-      .then((r) => {
-        if (!r.ok) throw new Error('Problem not found')
-        return r.json()
-      })
-      .then((data: ProblemData) => {
-        setProblem(data)
-        reset(data.starterCode)
-      })
-      .catch((e) => setError(e.message))
-      .finally(() => setLoading(false))
-  }, [id, reset])
+    if (problem) reset(problem.starterCode)
+  }, [id, problem, reset])
 
   useEffect(() => {
     if (!id || !session?.user?.id) return
@@ -84,44 +67,40 @@ export default function ProblemPage() {
       isHidden: tc.isHidden,
     }))
     const results = await handleTestCases(testCases)
-    if (!session?.user?.id || results.length === 0) return
+    if (results.length === 0) return
 
     const allPassed = results.every((r) => r.passed)
+    saveProblemStatus(id, allPassed ? 'solved' : 'attempted')
+
     const runtimeMs = Math.max(...results.map((r) => parseInt(r.time) || 0))
     const xpEarned = allPassed ? 30 : 0
 
-    fetch('/api/submissions', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        problemId: id,
-        code,
-        status: allPassed ? 'AC' : 'WA',
-        runtimeMs,
-        memoryKb: 1024,
-        xpEarned,
-      }),
-    })
-      .then((r) => r.json())
-      .then((sub) => {
-        if (sub?.id) setSubmissions((prev) => [sub, ...prev])
+    if (session?.user?.id) {
+      fetch('/api/submissions', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          problemId: id,
+          code,
+          status: allPassed ? 'AC' : 'WA',
+          runtimeMs,
+          memoryKb: 1024,
+          xpEarned,
+        }),
       })
-      .catch(() => {})
+        .then((r) => r.json())
+        .then((sub) => {
+          if (sub?.id) setSubmissions((prev) => [sub, ...prev])
+        })
+        .catch(() => {})
+    }
   }
 
-  if (loading) {
-    return (
-      <div className="h-[calc(100vh-3.5rem)] flex items-center justify-center">
-        <p className="text-[#6c7086] font-mono">Đang tải...</p>
-      </div>
-    )
-  }
-
-  if (error || !problem) {
+  if (!problem) {
     return (
       <div className="h-[calc(100vh-3.5rem)] flex flex-col items-center justify-center gap-4">
-        <p className="text-[#f38ba8] font-mono text-lg">Bài tập không tồn tại</p>
-        <Link href="/problems" className="text-[#89b4fa] font-mono text-sm hover:underline">
+        <p className="text-red font-mono text-lg">Bài tập không tồn tại</p>
+        <Link href="/problems" className="text-blue font-mono text-sm hover:underline">
           ← Quay lại danh sách
         </Link>
       </div>
@@ -131,15 +110,15 @@ export default function ProblemPage() {
   return (
     <div className="h-[calc(100vh-3.5rem)] flex flex-col lg:flex-row">
       {/* Mobile tabs */}
-      <div className="lg:hidden flex border-b border-[#313244]">
+      <div className="lg:hidden flex border-b border-surface0">
         {(['problem', 'editor', 'result'] as const).map((t) => (
           <button
             key={t}
             onClick={() => setTab(t)}
             className={`flex-1 px-4 py-2 text-sm font-mono transition-colors ${
               tab === t
-                ? 'text-[#a6e3a1] border-b-2 border-[#a6e3a1] bg-[#181825]'
-                : 'text-[#6c7086] hover:text-[#a6adc8]'
+                ? 'text-green border-b-2 border-green bg-mantle'
+                : 'text-overlay0 hover:text-subtext0'
             }`}
           >
             {t === 'problem' ? 'Đề bài' : t === 'editor' ? 'Editor' : 'Kết quả'}
@@ -148,13 +127,13 @@ export default function ProblemPage() {
       </div>
 
       {/* Problem description */}
-      <div className={`lg:w-2/5 xl:w-1/3 border-r border-[#313244] overflow-y-auto ${
+      <div className={`lg:w-2/5 xl:w-1/3 border-r border-surface0 overflow-y-auto ${
         tab !== 'problem' ? 'hidden lg:block' : 'flex-1'
       }`}>
-        <div className="p-3 border-b border-[#313244]">
+        <div className="p-3 border-b border-surface0">
           <Link
             href="/problems"
-            className="inline-flex items-center gap-1 text-sm font-mono text-[#6c7086] hover:text-[#cdd6f4] transition-colors"
+            className="inline-flex items-center gap-1 text-sm font-mono text-overlay0 hover:text-text transition-colors"
           >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
@@ -164,7 +143,7 @@ export default function ProblemPage() {
         </div>
         <div className="p-6">
           <div className="flex items-center gap-3 mb-4">
-            <h1 className="text-lg font-bold font-mono text-[#cdd6f4]">{problem.title}</h1>
+            <h1 className="text-lg font-bold font-mono text-text">{problem.title}</h1>
             <span className={`text-xs px-2 py-0.5 rounded-full font-mono ${difficultyColors[problem.difficulty]}`}>
               {problem.difficulty}
             </span>
@@ -172,28 +151,28 @@ export default function ProblemPage() {
 
           <div className="space-y-4 text-sm">
             <div>
-              <h3 className="text-[#cdd6f4] font-medium mb-1 font-mono">Mô tả</h3>
-              <p className="text-[#a6adc8] leading-relaxed">{problem.description}</p>
+              <h3 className="text-text font-medium mb-1 font-mono">Mô tả</h3>
+              <p className="text-subtext0 leading-relaxed">{problem.description}</p>
             </div>
 
             <div>
-              <h3 className="text-[#cdd6f4] font-medium mb-1 font-mono">Input Format</h3>
-              <pre className="bg-[#181825] p-3 rounded-lg text-[#a6adc8] text-xs whitespace-pre-wrap">{problem.inputFormat}</pre>
+              <h3 className="text-text font-medium mb-1 font-mono">Input Format</h3>
+              <pre className="bg-mantle p-3 rounded-lg text-subtext0 text-xs whitespace-pre-wrap">{problem.inputFormat}</pre>
             </div>
 
             <div>
-              <h3 className="text-[#cdd6f4] font-medium mb-1 font-mono">Constraints</h3>
-              <pre className="bg-[#181825] p-3 rounded-lg text-[#a6adc8] text-xs">{problem.constraints}</pre>
+              <h3 className="text-text font-medium mb-1 font-mono">Constraints</h3>
+              <pre className="bg-mantle p-3 rounded-lg text-subtext0 text-xs">{problem.constraints}</pre>
             </div>
 
             <div>
-              <h3 className="text-[#cdd6f4] font-medium mb-1 font-mono">Sample Input</h3>
-              <pre className="bg-[#181825] p-3 rounded-lg text-[#a6e3a1] text-xs">{problem.sampleInput}</pre>
+              <h3 className="text-text font-medium mb-1 font-mono">Sample Input</h3>
+              <pre className="bg-mantle p-3 rounded-lg text-green text-xs">{problem.sampleInput}</pre>
             </div>
 
             <div>
-              <h3 className="text-[#cdd6f4] font-medium mb-1 font-mono">Sample Output</h3>
-              <pre className="bg-[#181825] p-3 rounded-lg text-[#a6e3a1] text-xs">{problem.sampleOutput}</pre>
+              <h3 className="text-text font-medium mb-1 font-mono">Sample Output</h3>
+              <pre className="bg-mantle p-3 rounded-lg text-green text-xs">{problem.sampleOutput}</pre>
             </div>
 
             <Button
@@ -226,14 +205,14 @@ export default function ProblemPage() {
             onReset={() => reset(problem.starterCode)}
           />
         </div>
-        <div className="h-1/2 min-h-[150px] border-t border-[#313244] flex flex-col">
-          <div className="flex border-b border-[#313244]">
+        <div className="h-1/2 min-h-[150px] border-t border-surface0 flex flex-col">
+          <div className="flex border-b border-surface0">
             <button
               onClick={() => setPanelTab('result')}
               className={`px-4 py-1.5 text-xs font-mono transition-colors ${
                 panelTab === 'result'
-                  ? 'text-[#a6e3a1] border-b-2 border-[#a6e3a1]'
-                  : 'text-[#6c7086] hover:text-[#a6adc8]'
+                  ? 'text-green border-b-2 border-green'
+                  : 'text-overlay0 hover:text-subtext0'
               }`}
             >
               Kết quả
@@ -242,8 +221,8 @@ export default function ProblemPage() {
               onClick={() => setPanelTab('history')}
               className={`px-4 py-1.5 text-xs font-mono transition-colors ${
                 panelTab === 'history'
-                  ? 'text-[#a6e3a1] border-b-2 border-[#a6e3a1]'
-                  : 'text-[#6c7086] hover:text-[#a6adc8]'
+                  ? 'text-green border-b-2 border-green'
+                  : 'text-overlay0 hover:text-subtext0'
               }`}
             >
               Lịch sử

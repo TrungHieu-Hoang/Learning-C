@@ -11,8 +11,8 @@ interface CardProps {
 export function Card({ children, className = '', hover = false, onClick }: CardProps) {
   return (
     <div
-      className={`bg-[#181825] border border-[#313244] rounded-xl ${
-        hover ? 'hover:border-[#45475a] transition-colors cursor-pointer' : ''
+      className={`bg-mantle border border-surface0 rounded-xl ${
+        hover ? 'hover:border-surface1 transition-colors cursor-pointer' : ''
       } ${onClick ? 'cursor-pointer' : ''} ${className}`}
       onClick={onClick}
       role={onClick ? 'button' : undefined}

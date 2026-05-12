@@ -20,20 +20,20 @@ export function ModuleCard({ id, title, description, orderIndex, isLocked, progr
       <Card hover={!isLocked} className={`p-5 animate-fade-in ${isLocked ? 'opacity-40' : ''}`}>
         <div className="flex items-start justify-between mb-3">
           <div className="flex items-center gap-2">
-            <span className="text-[#6c7086] text-xs font-mono">
+            <span className="text-overlay0 text-xs font-mono">
               Module {orderIndex}
             </span>
-            {isLocked && <span className="text-[#6c7086]">🔒</span>}
-            {completed && <span className="text-[#a6e3a1] text-sm">✓</span>}
+            {isLocked && <span className="text-overlay0">🔒</span>}
+            {completed && <span className="text-green text-sm">✓</span>}
           </div>
-          <span className="text-xs font-mono text-[#6c7086]">{lessonCount} bài</span>
+          <span className="text-xs font-mono text-overlay0">{lessonCount} bài</span>
         </div>
-        <h3 className="text-[#cdd6f4] font-semibold text-base mb-1.5 font-mono">{title}</h3>
-        <p className="text-[#6c7086] text-sm mb-4 line-clamp-2">{description}</p>
+        <h3 className="text-text font-semibold text-base mb-1.5 font-mono">{title}</h3>
+        <p className="text-overlay0 text-sm mb-4 line-clamp-2">{description}</p>
         {!isLocked && (
-          <div className="w-full bg-[#313244] rounded-full h-1.5">
+          <div className="w-full bg-surface0 rounded-full h-1.5">
             <div
-              className="bg-[#a6e3a1] h-1.5 rounded-full transition-all duration-500"
+              className="bg-green h-1.5 rounded-full transition-all duration-500"
               style={{ width: `${Math.min(progress, 100)}%` }}
             />
           </div>

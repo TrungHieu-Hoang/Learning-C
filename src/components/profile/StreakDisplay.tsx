@@ -15,11 +15,11 @@ export function StreakDisplay({ streak, longestStreak }: StreakDisplayProps) {
     <div className="space-y-2">
       <div className="flex items-center gap-2 text-sm">
         <span className="text-lg">🔥</span>
-        <span className="font-mono text-[#cdd6f4]">
+        <span className="font-mono text-text">
           <strong>{streak}</strong> ngày liên tiếp
         </span>
         {streak >= 7 && (
-          <span className="text-xs text-[#a6e3a1] font-mono">(×1.5 XP bonus active!)</span>
+          <span className="text-xs text-green font-mono">(×1.5 XP bonus active!)</span>
         )}
       </div>
       <div className="flex gap-1">
@@ -32,10 +32,10 @@ export function StreakDisplay({ streak, longestStreak }: StreakDisplayProps) {
               key={day}
               className={`w-8 h-8 rounded-lg flex items-center justify-center text-xs font-mono ${
                 isActive
-                  ? 'bg-[#a6e3a1] text-[#1e1e2e] font-bold'
+                  ? 'bg-green text-base font-bold'
                   : isPast
-                  ? 'bg-[#a6e3a1]/20 text-[#a6e3a1]'
-                  : 'bg-[#313244] text-[#6c7086]'
+                  ? 'bg-green/20 text-green'
+                  : 'bg-surface0 text-overlay0'
               }`}
               title={day}
             >
@@ -45,7 +45,7 @@ export function StreakDisplay({ streak, longestStreak }: StreakDisplayProps) {
         })}
       </div>
       {longestStreak && (
-        <p className="text-[#6c7086] text-xs font-mono">
+        <p className="text-overlay0 text-xs font-mono">
           Kỷ lục: {longestStreak} ngày
         </p>
       )}

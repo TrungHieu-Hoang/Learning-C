@@ -13,7 +13,7 @@ export default function LeaderboardPage() {
     <div className="max-w-4xl mx-auto px-4 py-8">
       <div className="animate-fade-in mb-6">
         <h1 className="text-2xl font-bold font-mono mb-2">Bảng xếp hạng</h1>
-        <p className="text-[#a6adc8] text-sm font-mono">
+        <p className="text-subtext0 text-sm font-mono">
           Cạnh tranh và leo rank cùng cộng đồng
         </p>
       </div>
@@ -23,8 +23,8 @@ export default function LeaderboardPage() {
           onClick={() => setType('global')}
           className={`px-4 py-2 rounded-lg text-sm font-mono transition-colors ${
             type === 'global'
-              ? 'bg-[#a6e3a1] text-[#1e1e2e] font-medium'
-              : 'bg-[#313244] text-[#a6adc8] hover:bg-[#45475a]'
+              ? 'bg-green text-base font-medium'
+              : 'bg-surface0 text-subtext0 hover:bg-surface1'
           }`}
         >
           🌍 Global
@@ -33,8 +33,8 @@ export default function LeaderboardPage() {
           onClick={() => setType('weekly')}
           className={`px-4 py-2 rounded-lg text-sm font-mono transition-colors ${
             type === 'weekly'
-              ? 'bg-[#a6e3a1] text-[#1e1e2e] font-medium'
-              : 'bg-[#313244] text-[#a6adc8] hover:bg-[#45475a]'
+              ? 'bg-green text-base font-medium'
+              : 'bg-surface0 text-subtext0 hover:bg-surface1'
           }`}
         >
           📅 Weekly

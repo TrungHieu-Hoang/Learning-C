@@ -9,12 +9,12 @@ interface SubmissionHistoryProps {
 }
 
 const statusIcons: Record<string, { icon: string; color: string }> = {
-  AC: { icon: '✓', color: 'text-[#a6e3a1]' },
-  WA: { icon: '✗', color: 'text-[#f38ba8]' },
-  TLE: { icon: '⚠', color: 'text-[#f9e2af]' },
-  CE: { icon: '⚡', color: 'text-[#fab387]' },
-  RE: { icon: '✗', color: 'text-[#f38ba8]' },
-  PENDING: { icon: '○', color: 'text-[#6c7086]' },
+  AC: { icon: '✓', color: 'text-green' },
+  WA: { icon: '✗', color: 'text-red' },
+  TLE: { icon: '⚠', color: 'text-yellow' },
+  CE: { icon: '⚡', color: 'text-peach' },
+  RE: { icon: '✗', color: 'text-red' },
+  PENDING: { icon: '○', color: 'text-overlay0' },
 }
 
 export function SubmissionHistory({ submissions, loading }: SubmissionHistoryProps) {
@@ -23,7 +23,7 @@ export function SubmissionHistory({ submissions, loading }: SubmissionHistoryPro
   if (loading) {
     return (
       <div className="flex items-center justify-center py-8">
-        <div className="w-5 h-5 border-2 border-[#6c7086] border-t-transparent rounded-full animate-spin" />
+        <div className="w-5 h-5 border-2 border-overlay0 border-t-transparent rounded-full animate-spin" />
       </div>
     )
   }
@@ -31,7 +31,7 @@ export function SubmissionHistory({ submissions, loading }: SubmissionHistoryPro
   if (submissions.length === 0) {
     return (
       <div className="flex items-center justify-center py-8">
-        <span className="text-[#6c7086] font-mono text-sm italic">Chưa có lần nộp nào</span>
+        <span className="text-overlay0 font-mono text-sm italic">Chưa có lần nộp nào</span>
       </div>
     )
   }
@@ -41,7 +41,7 @@ export function SubmissionHistory({ submissions, loading }: SubmissionHistoryPro
       <div className="overflow-auto">
         <table className="w-full text-sm font-mono">
           <thead>
-            <tr className="text-[#6c7086] text-xs border-b border-[#313244]">
+            <tr className="text-overlay0 text-xs border-b border-surface0">
               <th className="px-3 py-2 text-left">#</th>
               <th className="px-3 py-2 text-left">Trạng thái</th>
               <th className="px-3 py-2 text-left">Thời gian</th>
@@ -55,24 +55,24 @@ export function SubmissionHistory({ submissions, loading }: SubmissionHistoryPro
             {submissions.map((s, i) => {
               const st = statusIcons[s.status] || statusIcons.PENDING
               return (
-                <tr key={s.id} className="border-b border-[#313244] hover:bg-[#313244]/50 transition-colors">
-                  <td className="px-3 py-2 text-[#6c7086]">{submissions.length - i}</td>
+                <tr key={s.id} className="border-b border-surface0 hover:bg-surface0/50 transition-colors">
+                  <td className="px-3 py-2 text-overlay0">{submissions.length - i}</td>
                   <td className="px-3 py-2">
                     <span className={`${st.color}`}>{st.icon} {s.status}</span>
                   </td>
-                  <td className="px-3 py-2 text-[#a6adc8]">
+                  <td className="px-3 py-2 text-subtext0">
                     {new Date(s.submittedAt).toLocaleDateString('vi-VN', {
                       hour: '2-digit',
                       minute: '2-digit',
                     })}
                   </td>
-                  <td className="px-3 py-2 text-[#a6adc8]">{s.runtimeMs}ms</td>
-                  <td className="px-3 py-2 text-[#a6adc8]">{s.memoryKb}KB</td>
-                  <td className="px-3 py-2 text-[#f9e2af]">+{s.xpEarned}</td>
+                  <td className="px-3 py-2 text-subtext0">{s.runtimeMs}ms</td>
+                  <td className="px-3 py-2 text-subtext0">{s.memoryKb}KB</td>
+                  <td className="px-3 py-2 text-yellow">+{s.xpEarned}</td>
                   <td className="px-3 py-2">
                     <button
                       onClick={() => setViewing(s)}
-                      className="text-[#89b4fa] hover:text-[#b4d0fb] transition-colors text-xs"
+                      className="text-blue hover:text-blue-hover transition-colors text-xs"
                     >
                       Xem code
                     </button>
