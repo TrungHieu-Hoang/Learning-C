@@ -1,6 +1,7 @@
 import NextAuth, { type DefaultSession } from 'next-auth'
 import GoogleProvider from 'next-auth/providers/google'
 import GitHubProvider from 'next-auth/providers/github'
+import { prisma } from '@/lib/prisma'
 
 declare module 'next-auth' {
   interface Session {
@@ -34,9 +35,41 @@ const handler = NextAuth({
     strategy: 'jwt',
   },
   callbacks: {
+    async signIn({ user, account, profile }) {
+      if (account?.provider === 'google' || account?.provider === 'github') {
+        const email = user.email
+        if (!email) return false
+        const name = (profile as any)?.name || user.name || email.split('@')[0]
+        try {
+          await prisma.user.upsert({
+            where: { email },
+            update: { avatar: user.image, username: name.replace(/\s+/g, '_').toLowerCase() },
+            create: {
+              email,
+              username: name.replace(/\s+/g, '_').toLowerCase(),
+              avatar: user.image,
+            },
+          })
+        } catch {
+          // DB not available — proceed without creating user record
+        }
+      }
+      return true
+    },
     async session({ session, token }) {
-      if (session.user) {
-        session.user.id = token.sub!
+      if (session.user?.email) {
+        try {
+          const dbUser = await prisma.user.findUnique({
+            where: { email: session.user.email },
+            select: { id: true },
+          })
+          if (dbUser) {
+            session.user.id = dbUser.id
+          }
+        } catch {
+          // fallback: use token.sub
+          if (token.sub) session.user.id = token.sub
+        }
       }
       return session
     },
