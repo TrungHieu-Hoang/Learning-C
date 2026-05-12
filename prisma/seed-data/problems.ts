@@ -2798,4 +2798,909 @@ int main() {
       { input: '100 / 10 + 5 * 2', expectedOutput: '20', isHidden: true },
     ],
   },
+  // === HACKERRANK PROBLEMS ===
+  {
+    id: 'hr-find-max',
+    title: 'Find Maximum of Three',
+    difficulty: 'easy',
+    description: 'Nhập ba số nguyên và in ra số lớn nhất.',
+    inputFormat: 'Một dòng chứa ba số nguyên a, b, c.',
+    constraints: '-1000 ≤ a, b, c ≤ 1000',
+    sampleInput: '10 25 7',
+    sampleOutput: '25',
+    starterCode: `#include <stdio.h>
+
+int main() {
+    int a, b, c;
+    scanf("%d %d %d", &a, &b, &c);
+
+    // Tim so lon nhat
+
+    return 0;
+}`,
+    explanation: 'So sánh lần lượt: tìm max = a, nếu b > max thì max = b, nếu c > max thì max = c.',
+    solution: `#include <stdio.h>
+
+int main() {
+    int a, b, c;
+    scanf("%d %d %d", &a, &b, &c);
+    int max = a;
+    if (b > max) max = b;
+    if (c > max) max = c;
+    printf("%d", max);
+    return 0;
+}`,
+    testCases: [
+      { input: '10 25 7', expectedOutput: '25', isHidden: false },
+      { input: '-5 -2 -10', expectedOutput: '-2', isHidden: false },
+      { input: '100 100 50', expectedOutput: '100', isHidden: true },
+    ],
+  },
+  {
+    id: 'hr-even-odd',
+    title: 'Even or Odd',
+    difficulty: 'easy',
+    description: 'Kiểm tra một số nguyên là chẵn hay lẻ. In "Even" nếu chẵn, "Odd" nếu lẻ.',
+    inputFormat: 'Một dòng chứa số nguyên n.',
+    constraints: '1 ≤ n ≤ 10^6',
+    sampleInput: '7',
+    sampleOutput: 'Odd',
+    starterCode: `#include <stdio.h>
+
+int main() {
+    int n;
+    scanf("%d", &n);
+
+    // Kiem tra chan le
+
+    return 0;
+}`,
+    explanation: 'Dùng toán tử %: n % 2 == 0 là chẵn, ngược lại là lẻ.',
+    solution: `#include <stdio.h>
+
+int main() {
+    int n;
+    scanf("%d", &n);
+    if (n % 2 == 0) printf("Even");
+    else printf("Odd");
+    return 0;
+}`,
+    testCases: [
+      { input: '7', expectedOutput: 'Odd', isHidden: false },
+      { input: '42', expectedOutput: 'Even', isHidden: false },
+      { input: '1', expectedOutput: 'Odd', isHidden: true },
+    ],
+  },
+  {
+    id: 'hr-sum-natural',
+    title: 'Sum of N Natural Numbers',
+    difficulty: 'easy',
+    description: 'Tính tổng các số từ 1 đến n.',
+    inputFormat: 'Một dòng chứa số nguyên n.',
+    constraints: '1 ≤ n ≤ 10^4',
+    sampleInput: '10',
+    sampleOutput: '55',
+    starterCode: `#include <stdio.h>
+
+int main() {
+    int n;
+    scanf("%d", &n);
+
+    // Tinh tong 1..n
+
+    return 0;
+}`,
+    explanation: 'Dùng công thức: sum = n * (n + 1) / 2 để tính O(1) thay vì vòng lặp.',
+    solution: `#include <stdio.h>
+
+int main() {
+    int n;
+    scanf("%d", &n);
+    printf("%d", n * (n + 1) / 2);
+    return 0;
+}`,
+    testCases: [
+      { input: '10', expectedOutput: '55', isHidden: false },
+      { input: '100', expectedOutput: '5050', isHidden: false },
+      { input: '1', expectedOutput: '1', isHidden: true },
+    ],
+  },
+  {
+    id: 'hr-multiplication-table',
+    title: 'Print Multiplication Table',
+    difficulty: 'easy',
+    description: 'In bảng cửu chương của n từ 1 đến 10, mỗi dòng có dạng "n x i = kết_quả".',
+    inputFormat: 'Một dòng chứa số nguyên n.',
+    constraints: '1 ≤ n ≤ 20',
+    sampleInput: '5',
+    sampleOutput: '5 x 1 = 5\n5 x 2 = 10\n5 x 3 = 15\n5 x 4 = 20\n5 x 5 = 25\n5 x 6 = 30\n5 x 7 = 35\n5 x 8 = 40\n5 x 9 = 45\n5 x 10 = 50',
+    starterCode: `#include <stdio.h>
+
+int main() {
+    int n;
+    scanf("%d", &n);
+
+    // In bang cuu chuong
+
+    return 0;
+}`,
+    explanation: 'Vòng lặp for i từ 1 đến 10, in "n x i = n*i" mỗi dòng.',
+    solution: `#include <stdio.h>
+
+int main() {
+    int n;
+    scanf("%d", &n);
+    for (int i = 1; i <= 10; i++)
+        printf("%d x %d = %d\\n", n, i, n * i);
+    return 0;
+}`,
+    testCases: [
+      { input: '5', expectedOutput: '5 x 1 = 5\n5 x 2 = 10\n5 x 3 = 15\n5 x 4 = 20\n5 x 5 = 25\n5 x 6 = 30\n5 x 7 = 35\n5 x 8 = 40\n5 x 9 = 45\n5 x 10 = 50', isHidden: false },
+      { input: '2', expectedOutput: '2 x 1 = 2\n2 x 2 = 4\n2 x 3 = 6\n2 x 4 = 8\n2 x 5 = 10\n2 x 6 = 12\n2 x 7 = 14\n2 x 8 = 16\n2 x 9 = 18\n2 x 10 = 20', isHidden: false },
+      { input: '10', expectedOutput: '10 x 1 = 10\n10 x 2 = 20\n10 x 3 = 30\n10 x 4 = 40\n10 x 5 = 50\n10 x 6 = 60\n10 x 7 = 70\n10 x 8 = 80\n10 x 9 = 90\n10 x 10 = 100', isHidden: true },
+    ],
+  },
+  {
+    id: 'hr-count-digits',
+    title: 'Count Number of Digits',
+    difficulty: 'easy',
+    description: 'Đếm số lượng chữ số của một số nguyên dương.',
+    inputFormat: 'Một dòng chứa số nguyên n.',
+    constraints: '1 ≤ n ≤ 10^9',
+    sampleInput: '12345',
+    sampleOutput: '5',
+    starterCode: `#include <stdio.h>
+
+int main() {
+    int n;
+    scanf("%d", &n);
+
+    // Dem so chu so
+
+    return 0;
+}`,
+    explanation: 'Chia n cho 10 trong vòng lặp, tăng biến đếm, đến khi n == 0.',
+    solution: `#include <stdio.h>
+
+int main() {
+    int n, count = 0;
+    scanf("%d", &n);
+    while (n > 0) { count++; n /= 10; }
+    printf("%d", count);
+    return 0;
+}`,
+    testCases: [
+      { input: '12345', expectedOutput: '5', isHidden: false },
+      { input: '1000000', expectedOutput: '7', isHidden: false },
+      { input: '9', expectedOutput: '1', isHidden: true },
+    ],
+  },
+  {
+    id: 'hr-reverse-number',
+    title: 'Reverse a Number',
+    difficulty: 'easy',
+    description: 'Đảo ngược các chữ số của một số nguyên.',
+    inputFormat: 'Một dòng chứa số nguyên n.',
+    constraints: '1 ≤ n ≤ 10^8',
+    sampleInput: '1234',
+    sampleOutput: '4321',
+    starterCode: `#include <stdio.h>
+
+int main() {
+    int n;
+    scanf("%d", &n);
+
+    // Dao nguoc so
+
+    return 0;
+}`,
+    explanation: 'Dùng rev = 0, lấy n % 10 là chữ số cuối, rev = rev * 10 + digit, n /= 10, lặp đến khi n = 0.',
+    solution: `#include <stdio.h>
+
+int main() {
+    int n, rev = 0;
+    scanf("%d", &n);
+    while (n > 0) {
+        rev = rev * 10 + n % 10;
+        n /= 10;
+    }
+    printf("%d", rev);
+    return 0;
+}`,
+    testCases: [
+      { input: '1234', expectedOutput: '4321', isHidden: false },
+      { input: '1000', expectedOutput: '1', isHidden: false },
+      { input: '5', expectedOutput: '5', isHidden: true },
+    ],
+  },
+  {
+    id: 'hr-power-of-two',
+    title: 'Power of Two Check',
+    difficulty: 'easy',
+    description: 'Kiểm tra một số nguyên dương có phải là lũy thừa của 2 hay không.',
+    inputFormat: 'Một dòng chứa số nguyên n.',
+    constraints: '1 ≤ n ≤ 10^9',
+    sampleInput: '16',
+    sampleOutput: 'Yes',
+    starterCode: `#include <stdio.h>
+
+int main() {
+    int n;
+    scanf("%d", &n);
+
+    // Kiem tra luy thua cua 2
+
+    return 0;
+}`,
+    explanation: 'Số là lũy thừa của 2 nếu n > 0 và (n & (n-1)) == 0.',
+    solution: `#include <stdio.h>
+
+int main() {
+    int n;
+    scanf("%d", &n);
+    if (n > 0 && (n & (n - 1)) == 0) printf("Yes");
+    else printf("No");
+    return 0;
+}`,
+    testCases: [
+      { input: '16', expectedOutput: 'Yes', isHidden: false },
+      { input: '10', expectedOutput: 'No', isHidden: false },
+      { input: '1', expectedOutput: 'Yes', isHidden: true },
+    ],
+  },
+  {
+    id: 'hr-find-missing',
+    title: 'Find Missing Number',
+    difficulty: 'medium',
+    description: 'Cho mảng gồm n-1 số nguyên từ 1 đến n, trong đó có một số bị thiếu. Tìm số đó.',
+    inputFormat: 'Dòng 1: n.\nDòng 2: n-1 số nguyên.',
+    constraints: '2 ≤ n ≤ 1000',
+    sampleInput: '5\n1 2 4 5',
+    sampleOutput: '3',
+    starterCode: `#include <stdio.h>
+
+int main() {
+    int n, arr[1000];
+    scanf("%d", &n);
+    for (int i = 0; i < n-1; i++)
+        scanf("%d", &arr[i]);
+
+    // Tim so bi thieu
+
+    return 0;
+}`,
+    explanation: 'Tổng 1..n = n*(n+1)/2. Lấy tổng đó trừ tổng các phần tử trong mảng, kết quả là số bị thiếu.',
+    solution: `#include <stdio.h>
+
+int main() {
+    int n, sum = 0;
+    scanf("%d", &n);
+    for (int i = 0; i < n-1; i++) {
+        int x; scanf("%d", &x);
+        sum += x;
+    }
+    printf("%d", n * (n + 1) / 2 - sum);
+    return 0;
+}`,
+    testCases: [
+      { input: '5\n1 2 4 5', expectedOutput: '3', isHidden: false },
+      { input: '3\n1 3', expectedOutput: '2', isHidden: false },
+      { input: '10\n1 2 3 4 6 7 8 9 10', expectedOutput: '5', isHidden: true },
+    ],
+  },
+  {
+    id: 'hr-two-sum',
+    title: 'Two Sum',
+    difficulty: 'medium',
+    description: 'Cho mảng số nguyên và một số target. Tìm hai chỉ số i, j (i ≠ j) sao cho arr[i] + arr[j] = target. In ra "i j" hoặc "No solution".',
+    inputFormat: 'Dòng 1: n target.\nDòng 2: n số nguyên.',
+    constraints: '2 ≤ n ≤ 100\n1 ≤ arr[i] ≤ 1000',
+    sampleInput: '5 9\n2 7 11 15 3',
+    sampleOutput: '0 4',
+    starterCode: `#include <stdio.h>
+
+int main() {
+    int n, target, arr[100];
+    scanf("%d %d", &n, &target);
+    for (int i = 0; i < n; i++)
+        scanf("%d", &arr[i]);
+
+    // Tim hai so co tong bang target
+
+    return 0;
+}`,
+    explanation: 'Dùng hai vòng lặp lồng nhau: i từ 0 đến n-2, j từ i+1 đến n-1, kiểm tra arr[i] + arr[j] == target.',
+    solution: `#include <stdio.h>
+
+int main() {
+    int n, target, arr[100];
+    scanf("%d %d", &n, &target);
+    for (int i = 0; i < n; i++) scanf("%d", &arr[i]);
+    for (int i = 0; i < n-1; i++)
+        for (int j = i+1; j < n; j++)
+            if (arr[i] + arr[j] == target) {
+                printf("%d %d", i, j);
+                return 0;
+            }
+    printf("No solution");
+    return 0;
+}`,
+    testCases: [
+      { input: '5 9\n2 7 11 15 3', expectedOutput: '0 4', isHidden: false },
+      { input: '4 10\n1 2 3 4', expectedOutput: '2 3', isHidden: false },
+      { input: '3 100\n1 2 3', expectedOutput: 'No solution', isHidden: true },
+    ],
+  },
+  {
+    id: 'hr-max-subarray',
+    title: 'Maximum Subarray Sum',
+    difficulty: 'medium',
+    description: 'Tìm tổng lớn nhất của một dãy con liên tiếp trong mảng số nguyên (thuật toán Kadane).',
+    inputFormat: 'Dòng 1: n.\nDòng 2: n số nguyên.',
+    constraints: '1 ≤ n ≤ 1000\n-1000 ≤ arr[i] ≤ 1000',
+    sampleInput: '8\n-2 1 -3 4 -1 2 1 -5 4',
+    sampleOutput: '6',
+    starterCode: `#include <stdio.h>
+
+int main() {
+    int n, arr[1000];
+    scanf("%d", &n);
+    for (int i = 0; i < n; i++)
+        scanf("%d", &arr[i]);
+
+    // Tim tong lon nhat cua day con lien tiep
+
+    return 0;
+}`,
+    explanation: 'Thuật toán Kadane: max_ending_here = max(arr[i], max_ending_here + arr[i]), max_so_far = max(max_so_far, max_ending_here).',
+    solution: `#include <stdio.h>
+
+int max(int a, int b) { return a > b ? a : b; }
+
+int main() {
+    int n, arr[1000];
+    scanf("%d", &n);
+    for (int i = 0; i < n; i++) scanf("%d", &arr[i]);
+    int max_ending = arr[0], max_sofar = arr[0];
+    for (int i = 1; i < n; i++) {
+        max_ending = max(arr[i], max_ending + arr[i]);
+        max_sofar = max(max_sofar, max_ending);
+    }
+    printf("%d", max_sofar);
+    return 0;
+}`,
+    testCases: [
+      { input: '8\n-2 1 -3 4 -1 2 1 -5 4', expectedOutput: '6', isHidden: false },
+      { input: '5\n-1 -2 -3 -4 -5', expectedOutput: '-1', isHidden: false },
+      { input: '4\n1 2 3 4', expectedOutput: '10', isHidden: true },
+    ],
+  },
+  {
+    id: 'hr-move-zeroes',
+    title: 'Move Zeroes to End',
+    difficulty: 'medium',
+    description: 'Di chuyển tất cả số 0 trong mảng về cuối, giữ nguyên thứ tự các phần tử khác không.',
+    inputFormat: 'Dòng 1: n.\nDòng 2: n số nguyên.',
+    constraints: '1 ≤ n ≤ 100',
+    sampleInput: '6\n0 1 0 3 12 0',
+    sampleOutput: '1 3 12 0 0 0',
+    starterCode: `#include <stdio.h>
+
+int main() {
+    int n, arr[100];
+    scanf("%d", &n);
+    for (int i = 0; i < n; i++)
+        scanf("%d", &arr[i]);
+
+    // Di chuyen so 0 ve cuoi
+
+    return 0;
+}`,
+    explanation: 'Dùng two-pointer: pos giữ vị trí cho phần tử khác 0. Duyệt mảng, nếu arr[i] != 0 thì gán arr[pos++] = arr[i]. Cuối cùng gán 0 cho các vị trí còn lại.',
+    solution: `#include <stdio.h>
+
+int main() {
+    int n, arr[100], pos = 0;
+    scanf("%d", &n);
+    for (int i = 0; i < n; i++) scanf("%d", &arr[i]);
+    for (int i = 0; i < n; i++)
+        if (arr[i] != 0) arr[pos++] = arr[i];
+    while (pos < n) arr[pos++] = 0;
+    for (int i = 0; i < n; i++) printf("%d ", arr[i]);
+    return 0;
+}`,
+    testCases: [
+      { input: '6\n0 1 0 3 12 0', expectedOutput: '1 3 12 0 0 0', isHidden: false },
+      { input: '3\n0 0 0', expectedOutput: '0 0 0', isHidden: false },
+      { input: '5\n1 2 3 4 5', expectedOutput: '1 2 3 4 5', isHidden: true },
+    ],
+  },
+  {
+    id: 'hr-valid-parentheses',
+    title: 'Valid Parentheses',
+    difficulty: 'medium',
+    description: 'Kiểm tra chuỗi dấu ngoặc () {} [] có hợp lệ hay không. Dùng stack để kiểm tra.',
+    inputFormat: 'Một dòng chứa chuỗi s gồm các ký tự (){}[].',
+    constraints: '1 ≤ |s| ≤ 100',
+    sampleInput: '({[]})',
+    sampleOutput: 'Valid',
+    starterCode: `#include <stdio.h>
+#include <string.h>
+
+char stack[100];
+int top = -1;
+
+void push(char c) { stack[++top] = c; }
+char pop() { return stack[top--]; }
+
+int main() {
+    char s[101];
+    scanf("%s", s);
+
+    // Kiem tra ngoac hop le
+
+    return 0;
+}`,
+    explanation: 'Duyệt chuỗi: nếu gặp ( { [ thì push. Nếu gặp ) } ] thì pop và kiểm tra có khớp không. Cuối cùng stack phải rỗng.',
+    solution: `#include <stdio.h>
+#include <string.h>
+
+char stack[100];
+int top = -1;
+
+void push(char c) { stack[++top] = c; }
+char pop() { return stack[top--]; }
+
+int match(char o, char c) {
+    return (o == '(' && c == ')') || (o == '{' && c == '}') || (o == '[' && c == ']');
+}
+
+int main() {
+    char s[101];
+    scanf("%s", s);
+    for (int i = 0; s[i] != '\\0'; i++) {
+        if (s[i] == '(' || s[i] == '{' || s[i] == '[')
+            push(s[i]);
+        else {
+            if (top == -1 || !match(pop(), s[i])) {
+                printf("Invalid"); return 0;
+            }
+        }
+    }
+    printf("%s", top == -1 ? "Valid" : "Invalid");
+    return 0;
+}`,
+    testCases: [
+      { input: '({[]})', expectedOutput: 'Valid', isHidden: false },
+      { input: '({[})', expectedOutput: 'Invalid', isHidden: false },
+      { input: '((()))', expectedOutput: 'Valid', isHidden: true },
+    ],
+  },
+  {
+    id: 'hr-majority-element',
+    title: 'Majority Element',
+    difficulty: 'medium',
+    description: 'Tìm phần tử xuất hiện nhiều hơn n/2 lần trong mảng. Đảm bảo luôn có đáp án.',
+    inputFormat: 'Dòng 1: n.\nDòng 2: n số nguyên.',
+    constraints: '1 ≤ n ≤ 100',
+    sampleInput: '7\n3 3 4 2 4 4 2 4 4',
+    sampleOutput: '4',
+    starterCode: `#include <stdio.h>
+
+int main() {
+    int n, arr[100];
+    scanf("%d", &n);
+    for (int i = 0; i < n; i++)
+        scanf("%d", &arr[i]);
+
+    // Tim phan tu da so
+
+    return 0;
+}`,
+    explanation: 'Thuật toán Boyer-Moore: candidate = arr[0], count = 1. Duyệt mảng, nếu arr[i] == candidate thì count++, ngược lại count--. Nếu count == 0 thì chọn candidate mới.',
+    solution: `#include <stdio.h>
+
+int main() {
+    int n, arr[100];
+    scanf("%d", &n);
+    for (int i = 0; i < n; i++) scanf("%d", &arr[i]);
+    int cand = arr[0], cnt = 1;
+    for (int i = 1; i < n; i++) {
+        if (arr[i] == cand) cnt++;
+        else if (--cnt == 0) { cand = arr[i]; cnt = 1; }
+    }
+    printf("%d", cand);
+    return 0;
+}`,
+    testCases: [
+      { input: '9\n3 3 4 2 4 4 2 4 4', expectedOutput: '4', isHidden: false },
+      { input: '3\n1 2 1', expectedOutput: '1', isHidden: false },
+      { input: '5\n2 2 2 1 1', expectedOutput: '2', isHidden: true },
+    ],
+  },
+  {
+    id: 'hr-duplicate-in-array',
+    title: 'Find Duplicate in Array',
+    difficulty: 'medium',
+    description: 'Cho mảng n+1 số nguyên trong khoảng [1, n]. Tìm một phần tử xuất hiện ít nhất hai lần.',
+    inputFormat: 'Dòng 1: n.\nDòng 2: n+1 số nguyên.',
+    constraints: '1 ≤ n ≤ 100',
+    sampleInput: '5\n1 3 4 2 2',
+    sampleOutput: '2',
+    starterCode: `#include <stdio.h>
+
+int main() {
+    int n, arr[101];
+    scanf("%d", &n);
+    for (int i = 0; i <= n; i++)
+        scanf("%d", &arr[i]);
+
+    // Tim phan tu trung lap
+
+    return 0;
+}`,
+    explanation: 'Dùng mảng đánh dấu visited[n+1] khởi tạo 0. Duyệt mảng, nếu visited[x] == 1 thì x là số trùng.',
+    solution: `#include <stdio.h>
+
+int main() {
+    int n, arr[101], visited[101] = {0};
+    scanf("%d", &n);
+    for (int i = 0; i <= n; i++) scanf("%d", &arr[i]);
+    for (int i = 0; i <= n; i++) {
+        if (visited[arr[i]]) { printf("%d", arr[i]); return 0; }
+        visited[arr[i]] = 1;
+    }
+    return 0;
+}`,
+    testCases: [
+      { input: '5\n1 3 4 2 2', expectedOutput: '2', isHidden: false },
+      { input: '3\n1 3 3', expectedOutput: '3', isHidden: false },
+      { input: '4\n4 3 2 1 1', expectedOutput: '1', isHidden: true },
+    ],
+  },
+  {
+    id: 'hr-merge-sort',
+    title: 'Merge Sort Implementation',
+    difficulty: 'hard',
+    description: 'Cài đặt thuật toán sắp xếp trộn (Merge Sort) để sắp xếp mảng số nguyên.',
+    inputFormat: 'Dòng 1: n.\nDòng 2: n số nguyên.',
+    constraints: '1 ≤ n ≤ 100',
+    sampleInput: '6\n5 2 8 1 9 3',
+    sampleOutput: '1 2 3 5 8 9',
+    starterCode: `#include <stdio.h>
+
+void merge(int arr[], int l, int m, int r) {
+    // Tron hai nua da sap xep
+}
+
+void merge_sort(int arr[], int l, int r) {
+    if (l < r) {
+        int m = (l + r) / 2;
+        merge_sort(arr, l, m);
+        merge_sort(arr, m + 1, r);
+        merge(arr, l, m, r);
+    }
+}
+
+int main() {
+    int n, arr[100];
+    scanf("%d", &n);
+    for (int i = 0; i < n; i++) scanf("%d", &arr[i]);
+
+    merge_sort(arr, 0, n-1);
+    for (int i = 0; i < n; i++) printf("%d ", arr[i]);
+    return 0;
+}`,
+    explanation: 'Merge Sort: chia mảng làm đôi, sắp xếp từng nửa đệ quy, rồi trộn hai nửa đã sắp xếp. Hàm merge dùng mảng tạm để trộn.',
+    solution: `#include <stdio.h>
+
+void merge(int arr[], int l, int m, int r) {
+    int n1 = m - l + 1, n2 = r - m;
+    int L[n1], R[n2];
+    for (int i = 0; i < n1; i++) L[i] = arr[l + i];
+    for (int i = 0; i < n2; i++) R[i] = arr[m + 1 + i];
+    int i = 0, j = 0, k = l;
+    while (i < n1 && j < n2) arr[k++] = (L[i] <= R[j]) ? L[i++] : R[j++];
+    while (i < n1) arr[k++] = L[i++];
+    while (j < n2) arr[k++] = R[j++];
+}
+
+void merge_sort(int arr[], int l, int r) {
+    if (l < r) {
+        int m = (l + r) / 2;
+        merge_sort(arr, l, m);
+        merge_sort(arr, m + 1, r);
+        merge(arr, l, m, r);
+    }
+}
+
+int main() {
+    int n, arr[100];
+    scanf("%d", &n);
+    for (int i = 0; i < n; i++) scanf("%d", &arr[i]);
+    merge_sort(arr, 0, n-1);
+    for (int i = 0; i < n; i++) printf("%d ", arr[i]);
+    return 0;
+}`,
+    testCases: [
+      { input: '6\n5 2 8 1 9 3', expectedOutput: '1 2 3 5 8 9', isHidden: false },
+      { input: '3\n3 2 1', expectedOutput: '1 2 3', isHidden: false },
+      { input: '5\n1 1 1 1 1', expectedOutput: '1 1 1 1 1', isHidden: true },
+    ],
+  },
+  {
+    id: 'hr-quick-sort',
+    title: 'Quick Sort Implementation',
+    difficulty: 'hard',
+    description: 'Cài đặt thuật toán sắp xếp nhanh (Quick Sort) với chiến lược chọn pivot là phần tử cuối.',
+    inputFormat: 'Dòng 1: n.\nDòng 2: n số nguyên.',
+    constraints: '1 ≤ n ≤ 100',
+    sampleInput: '7\n10 7 8 9 1 5 3',
+    sampleOutput: '1 3 5 7 8 9 10',
+    starterCode: `#include <stdio.h>
+
+int partition(int arr[], int low, int high) {
+    // Phan hoach mang dung pivot la arr[high]
+}
+
+void quick_sort(int arr[], int low, int high) {
+    if (low < high) {
+        int pi = partition(arr, low, high);
+        quick_sort(arr, low, pi - 1);
+        quick_sort(arr, pi + 1, high);
+    }
+}
+
+int main() {
+    int n, arr[100];
+    scanf("%d", &n);
+    for (int i = 0; i < n; i++) scanf("%d", &arr[i]);
+
+    quick_sort(arr, 0, n-1);
+    for (int i = 0; i < n; i++) printf("%d ", arr[i]);
+    return 0;
+}`,
+    explanation: 'Partition: chọn pivot = arr[high], i = low-1. Duyệt j từ low đến high-1, nếu arr[j] < pivot thì swap arr[++i] và arr[j]. Cuối swap arr[i+1] và arr[high].',
+    solution: `#include <stdio.h>
+
+void swap(int *a, int *b) { int t = *a; *a = *b; *b = t; }
+
+int partition(int arr[], int low, int high) {
+    int pivot = arr[high], i = low - 1;
+    for (int j = low; j < high; j++)
+        if (arr[j] < pivot) swap(&arr[++i], &arr[j]);
+    swap(&arr[i + 1], &arr[high]);
+    return i + 1;
+}
+
+void quick_sort(int arr[], int low, int high) {
+    if (low < high) {
+        int pi = partition(arr, low, high);
+        quick_sort(arr, low, pi - 1);
+        quick_sort(arr, pi + 1, high);
+    }
+}
+
+int main() {
+    int n, arr[100];
+    scanf("%d", &n);
+    for (int i = 0; i < n; i++) scanf("%d", &arr[i]);
+    quick_sort(arr, 0, n-1);
+    for (int i = 0; i < n; i++) printf("%d ", arr[i]);
+    return 0;
+}`,
+    testCases: [
+      { input: '7\n10 7 8 9 1 5 3', expectedOutput: '1 3 5 7 8 9 10', isHidden: false },
+      { input: '4\n4 3 2 1', expectedOutput: '1 2 3 4', isHidden: false },
+      { input: '6\n6 5 4 3 2 1', expectedOutput: '1 2 3 4 5 6', isHidden: true },
+    ],
+  },
+  {
+    id: 'hr-bst-operations',
+    title: 'Binary Search Tree Operations',
+    difficulty: 'hard',
+    description: 'Cài đặt cây nhị phân tìm kiếm (BST) với các thao tác: chèn, duyệt in-order, và tìm kiếm.',
+    inputFormat: 'Dòng 1: n (số phần tử).\nDòng 2: n số nguyên.\nDòng 3: x (giá trị cần tìm).',
+    constraints: '1 ≤ n ≤ 100',
+    sampleInput: '6\n5 3 7 2 4 8\n4',
+    sampleOutput: '2 3 4 5 7 8\nFound',
+    starterCode: `#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    int data;
+    struct Node *left, *right;
+} Node;
+
+Node *insert(Node *root, int val) {
+    // Chen vao BST
+}
+
+void inorder(Node *root) {
+    // Duyet in-order
+}
+
+int search(Node *root, int x) {
+    // Tim kiem trong BST
+}
+
+int main() {
+    int n, x;
+    scanf("%d", &n);
+    Node *root = NULL;
+    for (int i = 0; i < n; i++) {
+        int v; scanf("%d", &v);
+        root = insert(root, v);
+    }
+    scanf("%d", &x);
+    inorder(root);
+    printf("\\n%s", search(root, x) ? "Found" : "Not Found");
+    return 0;
+}`,
+    explanation: 'insert: nếu root NULL tạo node mới. Nếu val < root->data thì chèn trái, ngược lại chèn phải. inorder: trái → root → phải. search: so sánh với root, rẽ trái/phải tùy giá trị.',
+    solution: `#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node { int data; struct Node *left, *right; } Node;
+
+Node *insert(Node *root, int val) {
+    if (!root) {
+        Node *n = (Node*)malloc(sizeof(Node));
+        n->data = val; n->left = n->right = NULL;
+        return n;
+    }
+    if (val < root->data) root->left = insert(root->left, val);
+    else root->right = insert(root->right, val);
+    return root;
+}
+
+void inorder(Node *root) {
+    if (!root) return;
+    inorder(root->left);
+    printf("%d ", root->data);
+    inorder(root->right);
+}
+
+int search(Node *root, int x) {
+    if (!root) return 0;
+    if (root->data == x) return 1;
+    return x < root->data ? search(root->left, x) : search(root->right, x);
+}
+
+int main() {
+    int n, x; scanf("%d", &n);
+    Node *root = NULL;
+    for (int i = 0; i < n; i++) { int v; scanf("%d", &v); root = insert(root, v); }
+    scanf("%d", &x);
+    inorder(root);
+    printf("\\n%s", search(root, x) ? "Found" : "Not Found");
+    return 0;
+}`,
+    testCases: [
+      { input: '6\n5 3 7 2 4 8\n4', expectedOutput: '2 3 4 5 7 8\nFound', isHidden: false },
+      { input: '4\n10 5 15 20\n12', expectedOutput: '5 10 15 20\nNot Found', isHidden: false },
+      { input: '1\n42\n42', expectedOutput: '42\nFound', isHidden: true },
+    ],
+  },
+  {
+    id: 'hr-edit-distance',
+    title: 'Edit Distance (Levenshtein)',
+    difficulty: 'hard',
+    description: 'Tìm số thao tác tối thiểu (chèn, xóa, thay thế) để biến chuỗi s1 thành chuỗi s2.',
+    inputFormat: 'Dòng 1: Chuỗi s1.\nDòng 2: Chuỗi s2.',
+    constraints: '1 ≤ |s1|, |s2| ≤ 100',
+    sampleInput: 'kitten\nsitting',
+    sampleOutput: '3',
+    starterCode: `#include <stdio.h>
+#include <string.h>
+
+int min(int a, int b, int c) {
+    // Tra ve gia tri nho nhat
+}
+
+int main() {
+    char s1[101], s2[101];
+    scanf("%s %s", s1, s2);
+
+    // Tinh edit distance bang quy hoach dong
+
+    return 0;
+}`,
+    explanation: 'Bảng DP: dp[i][j] là edit distance của s1[0..i-1] và s2[0..j-1]. Nếu s1[i-1]==s2[j-1] thì dp[i][j]=dp[i-1][j-1], ngược lại lấy min của chèn/xóa/thay thế + 1.',
+    solution: `#include <stdio.h>
+#include <string.h>
+
+int min(int a, int b, int c) {
+    int m = a < b ? a : b;
+    return m < c ? m : c;
+}
+
+int main() {
+    char s1[101], s2[101];
+    scanf("%s %s", s1, s2);
+    int m = strlen(s1), n = strlen(s2);
+    int dp[101][101];
+    for (int i = 0; i <= m; i++) dp[i][0] = i;
+    for (int j = 0; j <= n; j++) dp[0][j] = j;
+    for (int i = 1; i <= m; i++)
+        for (int j = 1; j <= n; j++)
+            if (s1[i-1] == s2[j-1])
+                dp[i][j] = dp[i-1][j-1];
+            else
+                dp[i][j] = min(dp[i-1][j-1], dp[i-1][j], dp[i][j-1]) + 1;
+    printf("%d", dp[m][n]);
+    return 0;
+}`,
+    testCases: [
+      { input: 'kitten\nsitting', expectedOutput: '3', isHidden: false },
+      { input: 'abc\nabc', expectedOutput: '0', isHidden: false },
+      { input: 'abc\n', expectedOutput: '3', isHidden: true },
+    ],
+  },
+  {
+    id: 'hr-n-queens-hr',
+    title: 'N-Queens All Solutions',
+    difficulty: 'hard',
+    description: 'Đếm số cách xếp n quân hậu trên bàn cờ n×n sao cho không quân hậu nào ăn nhau.',
+    inputFormat: 'Một dòng chứa số nguyên n.',
+    constraints: '1 ≤ n ≤ 10',
+    sampleInput: '4',
+    sampleOutput: '2',
+    starterCode: `#include <stdio.h>
+
+int board[10][10], count = 0;
+
+int is_safe(int n, int row, int col) {
+    // Kiem tra an toan
+}
+
+void solve(int n, int row) {
+    // Dem so cach
+}
+
+int main() {
+    int n;
+    scanf("%d", &n);
+    solve(n, 0);
+    printf("%d", count);
+    return 0;
+}`,
+    explanation: 'Đệ quy quay lui như bài N-Queens nhưng không dừng lại ở lời giải đầu tiên — tiếp tục đếm tất cả cách xếp.',
+    solution: `#include <stdio.h>
+
+int board[10][10], count = 0;
+
+int is_safe(int n, int row, int col) {
+    for (int i = 0; i < row; i++)
+        if (board[i][col]) return 0;
+    for (int i = row-1, j = col-1; i >= 0 && j >= 0; i--, j--)
+        if (board[i][j]) return 0;
+    for (int i = row-1, j = col+1; i >= 0 && j < n; i--, j++)
+        if (board[i][j]) return 0;
+    return 1;
+}
+
+void solve(int n, int row) {
+    if (row == n) { count++; return; }
+    for (int col = 0; col < n; col++) {
+        if (is_safe(n, row, col)) {
+            board[row][col] = 1;
+            solve(n, row+1);
+            board[row][col] = 0;
+        }
+    }
+}
+
+int main() {
+    int n; scanf("%d", &n);
+    solve(n, 0);
+    printf("%d", count);
+    return 0;
+}`,
+    testCases: [
+      { input: '4', expectedOutput: '2', isHidden: false },
+      { input: '8', expectedOutput: '92', isHidden: false },
+      { input: '1', expectedOutput: '1', isHidden: true },
+    ],
+  },
 ];

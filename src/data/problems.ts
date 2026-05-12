@@ -28,7 +28,7 @@ export const problemsList: ProblemListItem[] = seedProblems.map((p) => ({
   id: p.id,
   title: p.title,
   difficulty: p.difficulty as Difficulty,
-  source: 'custom',
+  source: p.id.startsWith('hr-') ? 'hackerrank' : 'custom',
   description: p.description,
 }))
 
