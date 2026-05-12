@@ -1,8 +1,10 @@
-const JUDGE0_URL = process.env.JUDGE0_URL || 'https://judge0-ce.p.rapidapi.com'
-const JUDGE0_KEY = process.env.JUDGE0_API_KEY || ''
-const JUDGE0_HOST = process.env.JUDGE0_HOST || 'judge0-ce.p.rapidapi.com'
+const PISTON_URL = process.env.NEXT_PUBLIC_PISTON_URL || process.env.PISTON_URL || 'https://emkc.org/api/v2/piston'
 
-const LANGUAGE_MAP: Record<string, number> = { c: 50, cpp: 54, python: 71 }
+const LANGUAGE_MAP: Record<string, { language: string; version: string }> = {
+  c: { language: 'c', version: '10.2.0' },
+  cpp: { language: 'cpp', version: '10.2.0' },
+  python: { language: 'python', version: '3.10.0' },
+}
 
 export interface Judge0Submission {
   source_code: string
@@ -13,19 +15,28 @@ export interface Judge0Submission {
   memory_limit?: number
 }
 
-async function judge0Fetch(path: string, options: RequestInit = {}) {
-  const headers: Record<string, string> = {
-    'Content-Type': 'application/json',
-    ...(options.headers as Record<string, string>),
-  }
-  if (JUDGE0_KEY) headers['X-RapidAPI-Key'] = JUDGE0_KEY
-  if (JUDGE0_HOST) headers['X-RapidAPI-Host'] = JUDGE0_HOST
+async function pistonExecute(code: string, stdin: string, language: string, timeLimit: number, memoryLimit: number) {
+  const lang = LANGUAGE_MAP[language] || LANGUAGE_MAP.c
+  const res = await fetch(`${PISTON_URL}/execute`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      language: lang.language,
+      version: lang.version,
+      files: [{ name: 'main.c', content: code }],
+      stdin,
+      args: [],
+      compile_timeout: timeLimit * 1000,
+      run_timeout: timeLimit * 1000,
+      memory_limit: memoryLimit * 1000,
+    }),
+  })
 
-  const res = await fetch(`${JUDGE0_URL}${path}`, { ...options, headers })
   if (!res.ok) {
     const text = await res.text().catch(() => '')
-    throw new Error(`Judge0 error ${res.status}: ${text}`)
+    throw new Error(`Piston error ${res.status}: ${text}`)
   }
+
   return res.json()
 }
 
@@ -37,46 +48,40 @@ export async function createSubmission(
   timeLimit: number = 5,
   memoryLimit: number = 256
 ) {
-  const body: Judge0Submission = {
-    source_code: Buffer.from(code).toString('base64'),
-    language_id: LANGUAGE_MAP[language] || 50,
-    stdin: Buffer.from(stdin).toString('base64'),
-    cpu_time_limit: timeLimit,
-    memory_limit: memoryLimit,
-  }
-  if (expectedOutput !== undefined) {
-    body.expected_output = Buffer.from(expectedOutput).toString('base64')
-  }
-
-  const data = await judge0Fetch('/submissions?base64_encoded=true&wait=false', {
-    method: 'POST',
-    body: JSON.stringify(body),
-  })
-  return data.token as string
+  // Piston is synchronous; return a mock token
+  const result = await pistonExecute(code, stdin, language, timeLimit, memoryLimit)
+  return JSON.stringify(result)
 }
 
 export async function getSubmission(token: string) {
-  const data = await judge0Fetch(
-    `/submissions/${token}?base64_encoded=true&fields=stdout,stderr,compile_output,exit_code,time,memory,status`
-  )
+  const data = JSON.parse(token)
 
-  const decode = (s: string | null | undefined) => {
-    if (!s) return ''
-    try {
-      return Buffer.from(s, 'base64').toString('utf-8')
-    } catch {
-      return s
+  const compileOutput = data.compile?.stderr || ''
+  const runStdout = data.run?.stdout || ''
+  const runStderr = data.run?.stderr || ''
+  const exitCode = data.run?.code ?? -1
+
+  // If compile error, report as compile_output
+  if (data.compile && data.compile.code !== 0) {
+    return {
+      stdout: '',
+      stderr: '',
+      compile_output: data.compile.stderr || data.compile.output || 'Compilation error',
+      exit_code: data.compile.code,
+      time: '0',
+      memory: 0,
+      status: { id: 6, description: 'Compilation Error' },
     }
   }
 
   return {
-    stdout: decode(data.stdout),
-    stderr: decode(data.stderr),
-    compile_output: decode(data.compile_output),
-    exit_code: data.exit_code ?? -1,
-    time: data.time || '0',
-    memory: data.memory || 0,
-    status: data.status || { id: 0, description: 'Unknown' },
+    stdout: runStdout,
+    stderr: runStderr,
+    compile_output: compileOutput,
+    exit_code: exitCode,
+    time: '0',
+    memory: 0,
+    status: { id: exitCode === 0 ? 3 : 4, description: exitCode === 0 ? 'Accepted' : 'Wrong Answer' },
   }
 }
 
@@ -87,15 +92,34 @@ export async function runCode(
   timeLimit: number = 5,
   memoryLimit: number = 256
 ) {
-  const token = await createSubmission(code, stdin, language, undefined, timeLimit, memoryLimit)
+  const data = await pistonExecute(code, stdin, language, timeLimit, memoryLimit)
 
-  let result
-  for (let i = 0; i < 30; i++) {
-    await new Promise((r) => setTimeout(r, 500))
-    result = await getSubmission(token)
-    if (result.status.id >= 3) break
+  const compileOutput = data.compile?.stderr || ''
+  const runStdout = data.run?.stdout || ''
+  const runStderr = data.run?.stderr || ''
+
+  // Compile error
+  if (data.compile && data.compile.code !== 0) {
+    return {
+      stdout: '',
+      stderr: '',
+      compile_output: data.compile.stderr || data.compile.output || 'Compilation error',
+      exit_code: data.compile.code,
+      time: '0',
+      memory: 0,
+      status: { id: 6, description: 'Compilation Error' },
+    }
   }
-  return result!
+
+  return {
+    stdout: runStdout,
+    stderr: runStderr,
+    compile_output: compileOutput,
+    exit_code: data.run?.code ?? 0,
+    time: '0',
+    memory: 0,
+    status: { id: 3, description: 'Accepted' },
+  }
 }
 
 export async function runTestCase(
@@ -106,25 +130,31 @@ export async function runTestCase(
   timeLimit: number = 5,
   memoryLimit: number = 256
 ) {
-  const token = await createSubmission(code, input, language, expectedOutput, timeLimit, memoryLimit)
+  const data = await pistonExecute(code, input, language, timeLimit, memoryLimit)
 
-  let result
-  for (let i = 0; i < 30; i++) {
-    await new Promise((r) => setTimeout(r, 500))
-    result = await getSubmission(token)
-    if (result.status.id >= 3) break
+  // Compile error
+  if (data.compile && data.compile.code !== 0) {
+    return {
+      passed: false,
+      actual: '',
+      stderr: data.compile.stderr || data.compile.output || 'Compilation error',
+      time: '0',
+      memory: 0,
+      status: 'CE',
+    }
   }
 
-  const r = result!
-  const statusId = r.status.id
-  const passed = statusId === 3
+  const actual = (data.run?.stdout || '').trimEnd()
+  const stderr = data.run?.stderr || ''
+  const exitCode = data.run?.code ?? 0
+  const passed = actual === expectedOutput.trimEnd()
 
   return {
     passed,
-    actual: r.stdout.trim(),
-    stderr: r.stderr,
-    time: r.time,
-    memory: r.memory,
-    status: statusId === 4 ? 'WA' : statusId === 5 ? 'TLE' : statusId === 6 ? 'CE' : statusId >= 7 ? 'RE' : passed ? 'AC' : 'WA',
+    actual,
+    stderr,
+    time: '0',
+    memory: 0,
+    status: exitCode !== 0 ? 'RE' : passed ? 'AC' : 'WA',
   }
 }
