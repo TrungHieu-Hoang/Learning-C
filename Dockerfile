@@ -34,8 +34,8 @@ COPY --from=builder /app/public ./public
 COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma
 COPY --from=builder /app/node_modules/@prisma ./node_modules/@prisma
 
-RUN npm install prisma@5 --no-save
+RUN npm install prisma@5 tsx --no-save
 
 EXPOSE 3000
 
-CMD npx prisma db push --skip-generate && node server.js
+CMD npx prisma db push --skip-generate && npx tsx prisma/seed.ts && node server.js

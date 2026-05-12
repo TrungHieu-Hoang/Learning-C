@@ -32,6 +32,12 @@ export interface Problem {
   timeLimit: number
   memoryLimit: number
   starterCode: string
+  solution: string
+  explanation: string
+  inputFormat: string
+  constraints: string
+  sampleInput: string
+  sampleOutput: string
   testCases: TestCase[]
   lesson?: Lesson
 }

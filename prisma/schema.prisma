@@ -72,12 +72,13 @@ model Module {
 }
 
 model Lesson {
-  id         String     @id @default(cuid())
-  moduleId   String
-  title      String
-  contentMd  String
-  orderIndex Int
-  lessonType String     @default("theory") // theory, exercise, challenge
+  id          String     @id @default(cuid())
+  moduleId    String
+  title       String
+  contentMd   String
+  starterCode String     @default("")
+  orderIndex  Int
+  lessonType  String     @default("theory") // theory, exercise, challenge
 
   module   Module     @relation(fields: [moduleId], references: [id])
   problems Problem[]
@@ -94,6 +95,12 @@ model Problem {
   timeLimit    Int      @default(5) // seconds
   memoryLimit  Int      @default(256) // MB
   starterCode  String   @default("")
+  solution     String   @default("")
+  explanation  String   @default("")
+  inputFormat  String   @default("")
+  constraints  String   @default("")
+  sampleInput  String   @default("")
+  sampleOutput String   @default("")
   createdAt    DateTime @default(now())
 
   lesson      Lesson       @relation(fields: [lessonId], references: [id])
