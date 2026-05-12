@@ -1,8 +1,7 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  output: 'standalone',
-  transpilePackages: ['@monaco-editor/react'],
+transpilePackages: ['@monaco-editor/react'],
   images: {
     remotePatterns: [
       { protocol: 'https', hostname: '**' },
