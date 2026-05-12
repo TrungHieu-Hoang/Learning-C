@@ -15,7 +15,7 @@ const themes: { id: AppTheme; label: string; desc: string; swatches: string[] }[
     id: 'latte',
     label: 'Latte',
     desc: 'Sáng',
-    swatches: ['#e6e9ef', '#eff1f5', '#ccd0da', '#4c4f69', '#40a02b'],
+    swatches: ['#c8cad0', '#d6d8dd', '#babdc5', '#3a3b48', '#40a02b'],
   },
   {
     id: 'ocean',

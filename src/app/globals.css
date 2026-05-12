@@ -57,15 +57,15 @@
   --c-flamingo: #f2cdcd;
 }
 
-/* === Theme: Latte (light - Catppuccin Latte) === */
+/* === Theme: Latte (light xám, dịu mắt) === */
 .theme-latte {
-  --c-mantle: #e6e9ef;
-  --c-base: #eff1f5;
-  --c-surface0: #ccd0da;
-  --c-surface1: #bcc0cc;
-  --c-overlay0: #9ca0b0;
-  --c-text: #4c4f69;
-  --c-subtext0: #5c5f77;
+  --c-mantle: #c8cad0;
+  --c-base: #d6d8dd;
+  --c-surface0: #babdc5;
+  --c-surface1: #abafb9;
+  --c-overlay0: #8a8d99;
+  --c-text: #3a3b48;
+  --c-subtext0: #4a4b58;
   --c-blue: #1e66f5;
   --c-blue-hover: #4578f7;
   --c-green: #40a02b;
