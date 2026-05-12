@@ -622,6 +622,726 @@ int main() {
     return 0;
 }`,
   },
+  'de-quy': {
+    title: 'Module 13: Đệ quy chuyên sâu',
+    content: `## Đệ quy nâng cao
+
+### Đệ quy quay lui (Backtracking)
+Kỹ thuật thử-sai: thử từng lựa chọn, nếu sai thì quay lại bước trước.
+
+\`\`\`c
+// In tat ca nhi phan do dai n
+void binary(int n, int arr[], int i) {
+    if (i == n) {
+        for (int j = 0; j < n; j++) printf("%d", arr[j]);
+        printf("\\n"); return;
+    }
+    arr[i] = 0; binary(n, arr, i+1);
+    arr[i] = 1; binary(n, arr, i+1);
+}
+\`\`\`
+
+### Chia để trị (Divide and Conquer)
+Chia bài toán thành các bài toán con, giải đệ quy, kết hợp kết quả.
+
+\`\`\`c
+int power(int x, int n) {
+    if (n == 0) return 1;
+    int half = power(x, n/2);
+    if (n % 2 == 0) return half * half;
+    else return half * half * x;
+}
+\`\`\`
+
+### Đệ quy có nhớ (Memoization)
+Lưu kết quả đã tính để tránh tính lại.
+
+\`\`\`c
+int fib[100] = {0};
+int fib_memo(int n) {
+    if (n <= 1) return n;
+    if (fib[n]) return fib[n];
+    fib[n] = fib_memo(n-1) + fib_memo(n-2);
+    return fib[n];
+}
+\`\`\`
+
+### Nhánh cận (Branch and Bound)
+Cắt tỉa nhánh không khả thi để tối ưu thời gian chạy.`,
+    starterCode: `#include <stdio.h>
+
+// Liet ke to hop chap k cua n
+void combine(int n, int k, int arr[], int start, int pos) {
+    if (pos == k) {
+        for (int i = 0; i < k; i++)
+            printf("%d ", arr[i]);
+        printf("\\n");
+        return;
+    }
+    for (int i = start; i <= n; i++) {
+        arr[pos] = i;
+        combine(n, k, arr, i+1, pos+1);
+    }
+}
+
+int main() {
+    int n = 5, k = 3;
+    int arr[3];
+    combine(n, k, arr, 1, 0);
+    return 0;
+}`,
+  },
+  'cap-phat-dong': {
+    title: 'Module 14: Cấp phát bộ nhớ động',
+    content: `## Cấp phát bộ nhớ động
+
+### malloc - Cấp phát bộ nhớ
+\`\`\`c
+int *arr = (int*)malloc(n * sizeof(int));
+if (arr == NULL) { printf("Khong du bo nho!"); exit(1); }
+\`\`\`
+
+### calloc - Cấp phát và khởi tạo 0
+\`\`\`c
+int *arr = (int*)calloc(n, sizeof(int)); // tat ca = 0
+\`\`\`
+
+### realloc - Thay đổi kích thước
+\`\`\`c
+arr = (int*)realloc(arr, new_size * sizeof(int));
+if (arr == NULL) { /* loi */ }
+\`\`\`
+
+### free - Giải phóng bộ nhớ
+\`\`\`c
+free(arr);
+arr = NULL; // tranh dangling pointer
+\`\`\`
+
+### Memory leak
+Xảy ra khi malloc nhưng không free. Dùng valgrind để kiểm tra:
+\`\`\`bash
+valgrind --leak-check=full ./program
+\`\`\`
+
+### Lưu ý
+- Luôn kiểm tra NULL sau malloc/calloc/realloc
+- Giải phóng đúng 1 lần (double-free gây crash)
+- Không dùng con trỏ sau khi free (dangling pointer)`,
+    starterCode: `#include <stdio.h>
+#include <stdlib.h>
+
+int main() {
+    int n;
+    printf("Nhap so phan tu: ");
+    scanf("%d", &n);
+
+    // Cap phat dong mang n so nguyen
+    int *arr = (int*)malloc(n * sizeof(int));
+    if (arr == NULL) { printf("Loi cap phat!"); return 1; }
+
+    for (int i = 0; i < n; i++)
+        arr[i] = (i+1) * 10;
+
+    for (int i = 0; i < n; i++)
+        printf("%d ", arr[i]);
+
+    free(arr);
+    return 0;
+}`,
+  },
+  'preprocessor': {
+    title: 'Module 15: Preprocessor & Macro',
+    content: `## Preprocessor trong C
+
+### #define - Định nghĩa hằng và macro
+\`\`\`c
+#define PI 3.14159
+#define MAX(a,b) ((a) > (b) ? (a) : (b))
+#define SQUARE(x) ((x)*(x))
+\`\`\`
+
+### Toán tử trong macro
+\`\`\`c
+#define STR(x) #x        // bien thanh chuoi
+#define CONCAT(a,b) a##b // noi token
+\`\`\`
+
+### Điều kiện biên dịch
+\`\`\`c
+#ifdef DEBUG
+    printf("x = %d\\n", x);
+#endif
+
+#ifndef HEADER_H
+#define HEADER_H
+// header file content
+#endif
+\`\`\`
+
+### #pragma
+\`\`\`c
+#pragma once  // tranh include nhieu lan
+#pragma pack(1) // align struct
+\`\`\`
+
+### Macro vs Function
+- Macro: nhanh, không kiểm tra kiểu, khó debug
+- Function: chậm hơn (call overhead), an toàn kiểu
+
+### predefined macros
+\`\`\`c
+__LINE__  // dong hien tai
+__FILE__  // file hien tai
+__DATE__  // ngay bien dich
+__TIME__  // gio bien dich
+\`\`\``,
+    starterCode: `#include <stdio.h>
+
+#define PI 3.14159
+#define AREA(r) (PI * (r) * (r))
+#define DEBUG
+
+int main() {
+    double r = 5.0;
+#ifdef DEBUG
+    printf("Ban kinh: %.2f\\n", r);
+#endif
+    printf("Dien tich hinh tron: %.2f\\n", AREA(r));
+    return 0;
+}`,
+  },
+  'cau-truc-du-lieu': {
+    title: 'Module 16: Cấu trúc dữ liệu',
+    content: `## Cấu trúc dữ liệu trong C
+
+### Stack (Ngăn xếp) - LIFO
+\`\`\`c
+#define MAX 100
+int stack[MAX], top = -1;
+
+void push(int v) { if (top < MAX-1) stack[++top] = v; }
+int pop() { return (top >= 0) ? stack[top--] : -1; }
+int peek() { return (top >= 0) ? stack[top] : -1; }
+\`\`\`
+
+### Queue (Hàng đợi) - FIFO
+\`\`\`c
+int queue[MAX], front = 0, rear = 0;
+
+void enqueue(int v) { if (rear < MAX) queue[rear++] = v; }
+int dequeue() { return (front < rear) ? queue[front++] : -1; }
+\`\`\`
+
+### Linked List (DS Liên kết đơn)
+\`\`\`c
+typedef struct Node { int data; struct Node *next; } Node;
+
+Node *insert(Node *head, int v) {
+    Node *n = malloc(sizeof(Node));
+    n->data = v; n->next = head;
+    return n;
+}
+
+void print(Node *h) {
+    while (h) { printf("%d ", h->data); h = h->next; }
+}
+\`\`\`
+
+### Binary Search Tree
+\`\`\`c
+typedef struct Tree { int val; struct Tree *l, *r; } Tree;
+
+Tree *insert(Tree *t, int v) {
+    if (!t) { t = malloc(sizeof(Tree)); t->val = v; t->l=t->r=NULL; return t; }
+    if (v < t->val) t->l = insert(t->l, v);
+    else t->r = insert(t->r, v);
+    return t;
+}
+\`\`\`
+
+### Độ phức tạp
+- Stack/Queue: O(1) push/pop
+- Linked List: O(1) insert, O(n) search
+- BST: O(log n) trung bình, O(n) tệ nhất`,
+    starterCode: `#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node { int data; struct Node *next; } Node;
+
+Node *push(Node *head, int v) {
+    Node *n = malloc(sizeof(Node));
+    n->data = v; n->next = head;
+    return n;
+}
+
+void print(Node *head) {
+    while (head) { printf("%d ", head->data); head = head->next; }
+}
+
+int main() {
+    Node *head = NULL;
+    head = push(head, 10);
+    head = push(head, 20);
+    head = push(head, 30);
+    print(head); // 30 20 10
+    return 0;
+}`,
+  },
+  'con-tro-nang-cao': {
+    title: 'Module 17: Con trỏ nâng cao',
+    content: `## Con trỏ nâng cao
+
+### Function Pointer (Con trỏ hàm)
+\`\`\`c
+int add(int a, int b) { return a + b; }
+int sub(int a, int b) { return a - b; }
+
+int main() {
+    int (*op)(int, int); // khai bao con tro ham
+    op = add;
+    printf("%d", op(5, 3)); // 8
+    op = sub;
+    printf("%d", op(5, 3)); // 2
+}
+\`\`\`
+
+### Callback
+\`\`\`c
+void sort(int arr[], int n, int (*cmp)(int, int)) {
+    for (int i = 0; i < n-1; i++)
+        for (int j = 0; j < n-i-1; j++)
+            if (cmp(arr[j], arr[j+1]) > 0) {
+                int t = arr[j]; arr[j] = arr[j+1]; arr[j+1] = t;
+            }
+}
+\`\`\`
+
+### Void pointer
+\`\`\`c
+void *ptr; // con tro toan cuc, khong co kieu
+int x = 10; ptr = &x;
+printf("%d", *(int*)ptr); // ep kieu khi dung
+\`\`\`
+
+### Con trỏ cấp 2 (Double pointer)
+\`\`\`c
+int x = 10, *p = &x, **pp = &p;
+printf("%d", **pp); // 10
+\`\`\`
+
+### Mảng con trỏ hàm
+\`\`\`c
+int (*ops[])(int,int) = {add, sub, mul};
+printf("%d", ops[0](5,3)); // goi add
+\`\`\`
+
+### Ứng dụng: qsort với callback
+\`\`\`c
+int cmp(const void *a, const void *b) {
+    return *(int*)a - *(int*)b;
+}
+qsort(arr, n, sizeof(int), cmp);
+\`\`\``,
+    starterCode: `#include <stdio.h>
+
+int add(int a, int b) { return a + b; }
+int mul(int a, int b) { return a * b; }
+
+int main() {
+    int (*ops[2])(int, int) = {add, mul};
+    int a = 5, b = 3;
+    for (int i = 0; i < 2; i++)
+        printf("Result: %d\\n", ops[i](a, b));
+    return 0;
+}`,
+  },
+  'thu-vien-chuan': {
+    title: 'Module 18: Thư viện chuẩn C',
+    content: `## Thư viện chuẩn C
+
+### stdlib.h - Hàm tiện ích
+\`\`\`c
+atoi("123")     // chuoi sang int
+atof("3.14")    // chuoi sang double
+rand()          // so ngau nhien 0..RAND_MAX
+srand(time(0))  // khoi tao seed
+abs(-5)         // gia tri tuyet doi
+system("cls")   // lenh he thong
+qsort(arr, n, sizeof(int), cmp) // sap xep
+\`\`\`
+
+### math.h - Hàm toán học
+\`\`\`c
+sqrt(x), pow(x,y), sin(x), cos(x), tan(x)
+exp(x), log(x), log10(x), ceil(x), floor(x)
+fabs(x), fmod(x,y)
+\`\`\`
+
+### time.h - Thời gian
+\`\`\`c
+time_t t = time(NULL); // thoi gian hien tai
+clock_t start = clock();
+// do something
+clock_t end = clock();
+double time_spent = (double)(end-start) / CLOCKS_PER_SEC;
+\`\`\`
+
+### string.h - Xử lý chuỗi nâng cao
+\`\`\`c
+strtok(str, delim)   // tach chuoi
+strstr(haystack, needle) // tim chuoi con
+strrchr(s, c)      // vi tri cuoi cung cua c
+sprintf(buf, "%d", n) // ghi vao buffer
+\`\`\`
+
+### setjmp.h - Nhảy phi cục bộ
+\`\`\`c
+jmp_buf buf;
+if (setjmp(buf) == 0) {
+    // code binh thuong
+} else {
+    // xu ly loi
+}
+longjmp(buf, 1); // nhay den setjmp
+\`\`\`
+
+### assert.h - Debug
+\`\`\`c
+assert(ptr != NULL); // crash neu dieu kien sai
+\`\`\``,
+    starterCode: `#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+
+int main() {
+    srand(time(NULL));
+    printf("10 so ngau nhien: ");
+    for (int i = 0; i < 10; i++)
+        printf("%d ", rand() % 100);
+    return 0;
+}`,
+  },
+  'lap-trinh-he-thong': {
+    title: 'Module 19: Lập trình hệ thống',
+    content: `## Lập trình hệ thống với C
+
+### argc và argv - Đối số dòng lệnh
+\`\`\`c
+int main(int argc, char *argv[]) {
+    printf("Ten chuong trinh: %s\\n", argv[0]);
+    for (int i = 1; i < argc; i++)
+        printf("Doi so %d: %s\\n", i, argv[i]);
+}
+\`\`\`
+
+### Biến môi trường
+\`\`\`c
+#include <stdlib.h>
+char *path = getenv("PATH");    // lay bien moi truong
+putenv("MY_VAR=hello");          // dat bien moi truong
+\`\`\`
+
+### Hệ thống file
+\`\`\`c
+#include <stdio.h>
+remove("file.txt");     // xoa file
+rename("old","new");    // doi ten
+FILE *f = fopen("f.txt","r");
+if (f) { /* doc file */ fclose(f); }
+\`\`\`
+
+### Process
+\`\`\`c
+#include <stdlib.h>
+system("dir");     // chay lenh he thong (Windows)
+system("ls -la");  // chay lenh he thong (Linux)
+\`\`\`
+
+### Trên Linux/Unix:
+\`\`\`c
+#include <unistd.h>
+#include <sys/wait.h>
+
+pid_t pid = fork();
+if (pid == 0) { /* tien trinh con */ }
+else { /* tien trinh cha */ wait(NULL); }
+\`\`\`
+
+### Signal handling
+\`\`\`c
+#include <signal.h>
+void handler(int sig) { printf("Nhan signal %d\\n", sig); }
+signal(SIGINT, handler); // Ctrl+C
+\`\`\``,
+    starterCode: `#include <stdio.h>
+
+int main(int argc, char *argv[]) {
+    printf("So luong doi so: %d\\n", argc);
+    for (int i = 0; i < argc; i++)
+        printf("argv[%d] = %s\\n", i, argv[i]);
+    return 0;
+}`,
+  },
+  'bitwise-nang-cao': {
+    title: 'Module 20: Thao tác bit nâng cao',
+    content: `## Thao tác bit nâng cao
+
+### Bit Mask - Mặt nạ bit
+\`\`\`c
+#define BIT(n) (1 << n)  // bit thu n
+\`\`\`
+
+### Set/Clear/Toggle bit
+\`\`\`c
+int x = 0;
+x |= BIT(3);    // set bit 3:  x = x | (1<<3)
+x &= ~BIT(3);   // clear bit 3: x = x & ~(1<<3)
+x ^= BIT(3);    // toggle bit 3: x = x ^ (1<<3)
+(x & BIT(3))    // kiem tra bit 3
+\`\`\`
+
+### Kiểm tra bit
+\`\`\`c
+int is_set(int x, int n) { return (x >> n) & 1; }
+\`\`\`
+
+### Đếm bit 1 (Hamming weight)
+\`\`\`c
+int count_bits(int x) {
+    int count = 0;
+    while (x) { count += x & 1; x >>= 1; }
+    return count;
+}
+// Toi uu: x & (x-1) xoa bit 1 cuoi cung
+int count_bits_opt(int x) {
+    int count = 0;
+    while (x) { count++; x &= x - 1; }
+    return count;
+}
+\`\`\`
+
+### Endianness
+\`\`\`c
+int x = 0x12345678;
+char *c = (char*)&x;
+if (*c == 0x78) printf("Little endian");
+else printf("Big endian");
+\`\`\`
+
+### Checksum đơn giản
+\`\`\`c
+char checksum(char *data, int len) {
+    char sum = 0;
+    for (int i = 0; i < len; i++) sum ^= data[i];
+    return sum;
+}
+\`\`\`
+
+### Flag pattern
+\`\`\`c
+#define FLAG_READ  (1 << 0)
+#define FLAG_WRITE (1 << 1)
+#define FLAG_EXEC  (1 << 2)
+int flags = FLAG_READ | FLAG_WRITE;
+if (flags & FLAG_READ) printf("Co quyen doc");
+\`\`\``,
+    starterCode: `#include <stdio.h>
+
+#define BIT(n) (1 << n)
+#define FLAG_A BIT(0)
+#define FLAG_B BIT(1)
+#define FLAG_C BIT(2)
+
+int main() {
+    int flags = 0;
+    flags |= FLAG_A | FLAG_C;
+    printf("Flags: %d\\n", flags);
+    printf("Co A: %s\\n", (flags & FLAG_A) ? "Yes" : "No");
+    printf("Co B: %s\\n", (flags & FLAG_B) ? "Yes" : "No");
+    flags ^= FLAG_C;
+    printf("Sau toggle C: %d\\n", flags);
+    return 0;
+}`,
+  },
+  'debug-toi-uu': {
+    title: 'Module 21: Debug & Tối ưu',
+    content: `## Debug và Tối ưu trong C
+
+### assert - Kiểm tra điều kiện
+\`\`\`c
+#include <assert.h>
+assert(ptr != NULL); // dung chuong trinh neu ptr == NULL
+\`\`\`
+
+### Debug với macro
+\`\`\`c
+#ifdef DEBUG
+    #define LOG(fmt, ...) printf("[DEBUG] " fmt "\\n", ##__VA_ARGS__)
+#else
+    #define LOG(fmt, ...)
+#endif
+\`\`\`
+
+### GDB Commands cơ bản
+\`\`\`bash
+gcc -g program.c -o program   # bien dich voi -g
+gdb ./program
+(gdb) break main     # dat breakpoint
+(gdb) run            # chay
+(gdb) print x        # in bien
+(gdb) next           # buoc tiep
+(gdb) step           # vao trong ham
+(gdb) continue       # tiep tuc
+(gdb) quit           # thoat
+\`\`\`
+
+### Tối ưu hóa
+\`\`\`c
+// Compiler optimization flags: -O1, -O2, -O3, -Os
+inline int max(int a, int b) { return a > b ? a : b; }
+register int i; // (goi y) luu trong thanh ghi
+\`\`\`
+
+### restrict
+\`\`\`c
+void copy(int *restrict dest, int *restrict src, int n);
+// 2 con tro khong tro cung 1 vung nho -> toi uu hon
+\`\`\`
+
+### align - Căn chỉnh bộ nhớ
+\`\`\`c
+#include <stdalign.h>
+alignas(64) int arr[1000]; // can chinh 64 byte
+\`\`\`
+
+### Tối ưu Cache
+- Truy cập mảng tuần tự (stride 1) nhanh hơn nhảy cóc
+- Dùng struct nhỏ gọn (#pragma pack)
+- Tránh pointer aliasing (dùng restrict)
+
+### Profiling
+\`\`\`bash
+gcc -pg program.c -o program   # bien dich voi -pg
+./program                        # chay tao gmon.out
+gprof ./program                  # xem profile
+\`\`\``,
+    starterCode: `#include <stdio.h>
+#include <assert.h>
+
+#ifdef DEBUG
+    #define LOG(fmt, ...) printf("[DEBUG] " fmt "\\n", ##__VA_ARGS__)
+#else
+    #define LOG(fmt, ...)
+#endif
+
+int main() {
+    int x = 42;
+    LOG("x = %d", x);
+
+    int arr[] = {1, 2, 3, 4, 5};
+    int *p = arr;
+    assert(p != NULL);
+
+    int sum = 0;
+    for (int i = 0; i < 5; i++) sum += p[i];
+    printf("Sum: %d\\n", sum);
+    return 0;
+}`,
+  },
+  'thiet-ke-chuong-trinh': {
+    title: 'Module 22: Thiết kế chương trình',
+    content: `## Thiết kế chương trình C
+
+### Module hóa - Chia file
+\`\`\`c
+// math_utils.h
+#ifndef MATH_UTILS_H
+#define MATH_UTILS_H
+int add(int a, int b);
+int mul(int a, int b);
+#endif
+
+// math_utils.c
+#include "math_utils.h"
+int add(int a, int b) { return a + b; }
+int mul(int a, int b) { return a * b; }
+
+// main.c
+#include "math_utils.h"
+int main() { printf("%d", add(5,3)); }
+\`\`\`
+
+### Makefile
+\`\`\`makefile
+CC = gcc
+CFLAGS = -Wall -O2
+OBJ = main.o math_utils.o
+
+program: $(OBJ)
+    $(CC) $(CFLAGS) -o program $(OBJ)
+
+%.o: %.c
+    $(CC) $(CFLAGS) -c $<
+
+clean:
+    rm -f *.o program
+\`\`\`
+
+### Static Library
+\`\`\`bash
+gcc -c math_utils.c
+ar rcs libmath.a math_utils.o
+gcc main.c -L. -lmath -o program
+\`\`\`
+
+### Shared Library (Linux)
+\`\`\`bash
+gcc -fPIC -c math_utils.c
+gcc -shared -o libmath.so math_utils.o
+gcc main.c -L. -lmath -o program
+export LD_LIBRARY_PATH=.:$LD_LIBRARY_PATH
+./program
+\`\`\`
+
+### Qui tắc thiết kế
+- Mỗi file .c đi kèm 1 file .h
+- Tránh biến global (dùng static)
+- Dùng enum thay #define cho hằng số nhóm
+- Documentation với comment
+- Kiểm tra lỗi ở mọi hàm hệ thống
+
+### Coding convention
+\`\`\`c
+// Ten ham: snake_case
+// Hang so: UPPER_CASE
+// Bien: meaningful names
+// Khoang trong: 4 spaces / 1 tab
+\`\`\``,
+    starterCode: `/* calculator.h */
+#ifndef CALCULATOR_H
+#define CALCULATOR_H
+int add(int a, int b);
+int sub(int a, int b);
+int mul(int a, int b);
+int divide(int a, int b);
+#endif
+
+/* main.c */
+#include <stdio.h>
+#include "calculator.h"
+
+int add(int a, int b) { return a + b; }
+int sub(int a, int b) { return a - b; }
+int mul(int a, int b) { return a * b; }
+int divide(int a, int b) { return b ? a/b : 0; }
+
+int main() {
+    printf("5 + 3 = %d\\n", add(5,3));
+    printf("5 * 3 = %d\\n", mul(5,3));
+    return 0;
+}`,
+  },
 }
 
 export default function LessonPage() {
