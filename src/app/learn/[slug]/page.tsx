@@ -1,70 +1,50 @@
 'use client'
 import React, { useState, useEffect } from 'react'
 import Link from 'next/link'
-import { useParams } from 'next/navigation'
+import { useParams, useRouter } from 'next/navigation'
 import { CodeEditor } from '@/components/editor/CodeEditor'
 import { OutputPanel } from '@/components/editor/OutputPanel'
 import { TestCasePanel } from '@/components/editor/TestCasePanel'
 import { LessonContent } from '@/components/learn/LessonContent'
 import { useJudge } from '@/hooks/useJudge'
 import { useEditorStore } from '@/store/editorStore'
-
-interface LessonData {
-  id: string
-  title: string
-  contentMd: string
-  starterCode: string
-  lessonType: string
-}
-
-interface ModuleData {
-  id: string
-  title: string
-  description: string
-  lessons: LessonData[]
-}
+import { modulesData } from '@/data/lessons'
 
 export default function LessonPage() {
   const params = useParams()
   const slug = params.slug as string
   const [activeTab, setActiveTab] = useState<'theory' | 'editor' | 'result'>('theory')
-  const [moduleData, setModuleData] = useState<ModuleData | null>(null)
-  const [loading, setLoading] = useState(true)
   const { handleRun, testResults, showTestPanel, isRunning } = useJudge()
   const reset = useEditorStore((s) => s.reset)
   const [isCompleted, setIsCompleted] = useState(false)
   const [saving, setSaving] = useState(false)
 
-  useEffect(() => {
-    if (!slug) return
-    setLoading(true)
-    fetch(`/api/modules/${slug}`)
-      .then((r) => {
-        if (!r.ok) throw new Error('Not found')
-        return r.json()
-      })
-      .then((data: ModuleData) => {
-        setModuleData(data)
-      })
-      .catch(() => setModuleData(null))
-      .finally(() => setLoading(false))
-  }, [slug])
+  const router = useRouter()
+  const moduleData = modulesData.find((m) => m.id === slug) ?? null
 
   const lesson = moduleData?.lessons?.[0]
 
   const handleComplete = async () => {
     if (!lesson || saving) return
     setSaving(true)
+    setIsCompleted(true)
+    // Save to localStorage for offline use
+    const done = JSON.parse(localStorage.getItem('completed') || '[]')
+    if (!done.includes(lesson.id)) {
+      done.push(lesson.id)
+      localStorage.setItem('completed', JSON.stringify(done))
+    }
     try {
-      const res = await fetch('/api/progress', {
+      await fetch('/api/progress', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ lessonId: lesson.id, isCompleted: true }),
       })
-      if (res.ok) setIsCompleted(true)
-    } finally {
-      setSaving(false)
+    } catch {
+      // No DB — fine
     }
+    setSaving(false)
+    router.push('/learn')
   }
 
   useEffect(() => {
@@ -72,14 +52,6 @@ export default function LessonPage() {
       reset(lesson.starterCode)
     }
   }, [slug, lesson?.starterCode, reset])
-
-  if (loading) {
-    return (
-      <div className="h-[calc(100vh-3.5rem)] flex items-center justify-center">
-        <p className="text-[#6c7086] font-mono">Đang tải...</p>
-      </div>
-    )
-  }
 
   if (!moduleData || !lesson) {
     return (
@@ -110,10 +82,10 @@ export default function LessonPage() {
       </div>
 
       {/* Theory panel */}
-      <div className={`lg:w-1/2 xl:w-3/5 border-r border-[#313244] overflow-hidden ${
+      <div className={`lg:w-1/2 xl:w-3/5 border-r border-[#313244] flex flex-col ${
         activeTab !== 'theory' ? 'hidden lg:flex' : 'flex-1'
       }`}>
-        <div className="p-3 border-b border-[#313244]">
+        <div className="p-3 border-b border-[#313244] shrink-0">
           <Link
             href="/learn"
             className="inline-flex items-center gap-1 text-sm font-mono text-[#6c7086] hover:text-[#cdd6f4] transition-colors"
@@ -124,8 +96,10 @@ export default function LessonPage() {
             Quay lại
           </Link>
         </div>
-        <LessonContent content={lesson.contentMd} title={lesson.title} />
-        <div className="p-4 border-t border-[#313244]">
+        <div className="flex-1 overflow-y-auto min-h-0">
+          <LessonContent content={lesson.contentMd} title={lesson.title} />
+        </div>
+        <div className="p-4 border-t border-[#313244] shrink-0">
           {isCompleted ? (
             <div className="flex items-center justify-between">
               <p className="text-[#a6e3a1] font-mono text-sm">✓ Đã hoàn thành</p>

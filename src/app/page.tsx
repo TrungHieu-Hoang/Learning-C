@@ -1,26 +1,33 @@
 import Link from 'next/link'
-import { prisma } from '@/lib/prisma'
 
-export const dynamic = 'force-dynamic'
+const allModules = [
+  { id: 'nhap-mon', title: 'Nhập môn C' },
+  { id: 'bien-kieu-dulieu', title: 'Biến & Kiểu dữ liệu' },
+  { id: 'toan-tu', title: 'Toán tử' },
+  { id: 'dieu-kien', title: 'Điều kiện' },
+  { id: 'vong-lap', title: 'Vòng lặp' },
+  { id: 'ham', title: 'Hàm' },
+  { id: 'mang', title: 'Mảng' },
+  { id: 'chuoi', title: 'Chuỗi' },
+  { id: 'con-tro', title: 'Con trỏ' },
+  { id: 'struct-union', title: 'Struct & Union' },
+  { id: 'file-io', title: 'File I/O' },
+  { id: 'thuat-toan', title: 'Thuật toán' },
+  { id: 'de-quy', title: 'Đệ quy chuyên sâu' },
+  { id: 'cap-phat-dong', title: 'Cấp phát bộ nhớ động' },
+  { id: 'preprocessor', title: 'Preprocessor & Macro' },
+  { id: 'cau-truc-du-lieu', title: 'Cấu trúc dữ liệu' },
+  { id: 'con-tro-nang-cao', title: 'Con trỏ nâng cao' },
+  { id: 'thu-vien-chuan', title: 'Thư viện chuẩn C' },
+  { id: 'lap-trinh-he-thong', title: 'Lập trình hệ thống' },
+  { id: 'bitwise-nang-cao', title: 'Thao tác bit nâng cao' },
+  { id: 'debug-toi-uu', title: 'Debug & Tối ưu' },
+  { id: 'thiet-ke-chuong-trinh', title: 'Thiết kế chương trình' },
+]
 
-export default async function LandingPage() {
-  let modules: { id: string; title: string }[] = []
-  let problemCount = 58
-  try {
-    const result = await Promise.all([
-      prisma.module.findMany({
-        orderBy: { orderIndex: 'asc' },
-        select: { id: true, title: true },
-      }),
-      prisma.problem.count(),
-    ])
-    modules = result[0]
-    problemCount = result[1]
-  } catch {
-    // Fallback for static build / no DB
-    modules = []
-    problemCount = 58
-  }
+export default function LandingPage() {
+  const modules = allModules
+  const problemCount = 58
   return (
     <div className="max-w-6xl mx-auto px-4 py-16 md:py-24">
       {/* Hero */}

@@ -11,9 +11,10 @@ interface ModuleCardProps {
   isLocked: boolean
   progress?: number
   lessonCount: number
+  completed?: boolean
 }
 
-export function ModuleCard({ id, title, description, orderIndex, isLocked, progress = 0, lessonCount }: ModuleCardProps) {
+export function ModuleCard({ id, title, description, orderIndex, isLocked, progress = 0, lessonCount, completed }: ModuleCardProps) {
   return (
     <Link href={isLocked ? '#' : `/learn/${id}`} className={isLocked ? 'pointer-events-none' : ''}>
       <Card hover={!isLocked} className={`p-5 animate-fade-in ${isLocked ? 'opacity-40' : ''}`}>
@@ -23,6 +24,7 @@ export function ModuleCard({ id, title, description, orderIndex, isLocked, progr
               Module {orderIndex}
             </span>
             {isLocked && <span className="text-[#6c7086]">🔒</span>}
+            {completed && <span className="text-[#a6e3a1] text-sm">✓</span>}
           </div>
           <span className="text-xs font-mono text-[#6c7086]">{lessonCount} bài</span>
         </div>
