@@ -7,10 +7,10 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 WORKDIR /app
 
 COPY package*.json ./
-RUN npm install && npm install -g prisma@5
+RUN npm install
 
 COPY prisma ./prisma
-RUN ./node_modules/.bin/prisma generate
+RUN npx prisma generate
 
 COPY . .
 RUN npm run build
@@ -27,13 +27,15 @@ ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
 ENV HOSTNAME=0.0.0.0
 
-RUN npm install -g prisma@5
-
 COPY --from=builder /app/.next/standalone ./
 COPY --from=builder /app/.next/static ./.next/static
 COPY --from=builder /app/prisma ./prisma
 COPY --from=builder /app/public ./public
+COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma
+COPY --from=builder /app/node_modules/@prisma ./node_modules/@prisma
+
+RUN npm install prisma@5 --no-save
 
 EXPOSE 3000
 
-CMD prisma db push && node server.js
+CMD npx prisma db push && node server.js

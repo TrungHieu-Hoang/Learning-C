@@ -1,16 +1,17 @@
 'use client'
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
+import Link from 'next/link'
 import { useParams } from 'next/navigation'
+import { useSession } from 'next-auth/react'
 import { CodeEditor } from '@/components/editor/CodeEditor'
 import { OutputPanel } from '@/components/editor/OutputPanel'
 import { TestCasePanel } from '@/components/editor/TestCasePanel'
 import { Editorial } from '@/components/problems/Editorial'
+import { SubmissionHistory } from '@/components/submissions/SubmissionHistory'
 import { Button } from '@/components/ui/Button'
-import { Card } from '@/components/ui/Card'
 import { useJudge } from '@/hooks/useJudge'
 import { useEditorStore } from '@/store/editorStore'
-
-type Difficulty = 'easy' | 'medium' | 'hard'
+import type { Difficulty, Submission } from '@/types'
 
 const problemData: Record<string, {
   title: string
@@ -2758,19 +2759,15 @@ export default function ProblemPage() {
   const id = params.id as string
   const [showEditorial, setShowEditorial] = useState(false)
   const [tab, setTab] = useState<'problem' | 'editor' | 'result'>('problem')
+  const [panelTab, setPanelTab] = useState<'result' | 'history'>('result')
+  const [submissions, setSubmissions] = useState<Submission[]>([])
+  const [subsLoading, setSubsLoading] = useState(false)
+  const { data: session } = useSession()
   const { handleRun, handleTestCases, testResults, showTestPanel, isRunning } = useJudge()
+  const { code } = useEditorStore()
   const reset = useEditorStore((s) => s.reset)
 
   const problem = problemData[id]
-
-  if (!problem) {
-    return (
-      <div className="max-w-4xl mx-auto px-4 py-16 text-center">
-        <h1 className="text-2xl font-bold text-[#f38ba8] font-mono mb-2">Bài tập không tồn tại</h1>
-        <p className="text-[#6c7086] font-mono">ID: {id}</p>
-      </div>
-    )
-  }
 
   const difficultyColors: Record<Difficulty, string> = {
     easy: 'text-[#a6e3a1] bg-[#a6e3a1]/10',
@@ -2778,8 +2775,45 @@ export default function ProblemPage() {
     hard: 'text-[#f38ba8] bg-[#f38ba8]/10',
   }
 
+  useEffect(() => {
+    reset(problem?.starterCode ?? '')
+  }, [id, reset])
+
+  useEffect(() => {
+    if (!id || !session?.user?.id) return
+    setSubsLoading(true)
+    fetch(`/api/submissions?problemId=${id}`)
+      .then((r) => r.json())
+      .then((data) => setSubmissions(Array.isArray(data) ? data : []))
+      .catch(() => setSubmissions([]))
+      .finally(() => setSubsLoading(false))
+  }, [id, session])
+
   const handleSubmit = async () => {
-    await handleTestCases(problem.testCases)
+    const results = await handleTestCases(problem.testCases)
+    if (!session?.user?.id || results.length === 0) return
+
+    const allPassed = results.every((r) => r.passed)
+    const runtimeMs = Math.max(...results.map((r) => parseInt(r.time) || 0))
+    const xpEarned = allPassed ? 30 : 0
+
+    fetch('/api/submissions', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        problemId: id,
+        code,
+        status: allPassed ? 'AC' : 'WA',
+        runtimeMs,
+        memoryKb: 1024,
+        xpEarned,
+      }),
+    })
+      .then((r) => r.json())
+      .then((sub) => {
+        if (sub?.id) setSubmissions((prev) => [sub, ...prev])
+      })
+      .catch(() => {})
   }
 
   return (
@@ -2805,6 +2839,17 @@ export default function ProblemPage() {
       <div className={`lg:w-2/5 xl:w-1/3 border-r border-[#313244] overflow-y-auto ${
         tab !== 'problem' ? 'hidden lg:block' : 'flex-1'
       }`}>
+        <div className="p-3 border-b border-[#313244]">
+          <Link
+            href="/problems"
+            className="inline-flex items-center gap-1 text-sm font-mono text-[#6c7086] hover:text-[#cdd6f4] transition-colors"
+          >
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+            </svg>
+            Quay lại
+          </Link>
+        </div>
         <div className="p-6">
           <div className="flex items-center gap-3 mb-4">
             <h1 className="text-lg font-bold font-mono text-[#cdd6f4]">{problem.title}</h1>
@@ -2864,18 +2909,43 @@ export default function ProblemPage() {
       <div className={`lg:flex-1 flex flex-col ${tab !== 'editor' && tab !== 'result' ? 'hidden lg:flex' : 'flex-1'}`}>
         <div className="flex-1 min-h-[200px]">
           <CodeEditor
-            autoSaveKey={`problem-${id}`}
             onRun={handleRun}
             onSubmit={handleSubmit}
             onReset={() => reset(problem.starterCode)}
           />
         </div>
-        <div className="h-1/2 min-h-[150px] border-t border-[#313244]">
-          {showTestPanel && testResults.length > 0 ? (
-            <TestCasePanel results={testResults} isRunning={isRunning} />
-          ) : (
-            <OutputPanel />
-          )}
+        <div className="h-1/2 min-h-[150px] border-t border-[#313244] flex flex-col">
+          <div className="flex border-b border-[#313244]">
+            <button
+              onClick={() => setPanelTab('result')}
+              className={`px-4 py-1.5 text-xs font-mono transition-colors ${
+                panelTab === 'result'
+                  ? 'text-[#a6e3a1] border-b-2 border-[#a6e3a1]'
+                  : 'text-[#6c7086] hover:text-[#a6adc8]'
+              }`}
+            >
+              Kết quả
+            </button>
+            <button
+              onClick={() => setPanelTab('history')}
+              className={`px-4 py-1.5 text-xs font-mono transition-colors ${
+                panelTab === 'history'
+                  ? 'text-[#a6e3a1] border-b-2 border-[#a6e3a1]'
+                  : 'text-[#6c7086] hover:text-[#a6adc8]'
+              }`}
+            >
+              Lịch sử
+            </button>
+          </div>
+          <div className="flex-1 overflow-auto">
+            {panelTab === 'history' ? (
+              <SubmissionHistory submissions={submissions} loading={subsLoading} />
+            ) : showTestPanel && testResults.length > 0 ? (
+              <TestCasePanel results={testResults} isRunning={isRunning} />
+            ) : (
+              <OutputPanel />
+            )}
+          </div>
         </div>
       </div>
     </div>

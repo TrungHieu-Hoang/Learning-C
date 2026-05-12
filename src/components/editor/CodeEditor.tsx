@@ -3,13 +3,11 @@ import React, { useRef, useCallback } from 'react'
 import dynamic from 'next/dynamic'
 import type { OnMount } from '@monaco-editor/react'
 import { useEditorStore } from '@/store/editorStore'
-import { useAutoSave } from '@/hooks/useAutoSave'
 import { Button } from '@/components/ui/Button'
 
 const Monaco = dynamic(() => import('@monaco-editor/react'), { ssr: false })
 
 interface CodeEditorProps {
-  autoSaveKey?: string
   readOnly?: boolean
   onRun?: () => void
   onSubmit?: () => void
@@ -20,7 +18,6 @@ interface CodeEditorProps {
 }
 
 export function CodeEditor({
-  autoSaveKey,
   readOnly = false,
   onRun,
   onSubmit,
@@ -31,8 +28,6 @@ export function CodeEditor({
 }: CodeEditorProps) {
   const { code, setCode, fontSize, theme, isRunning, isSubmitting } = useEditorStore()
   const editorRef = useRef<Parameters<OnMount>[0] | null>(null)
-
-  if (autoSaveKey) useAutoSave(autoSaveKey)
 
   const handleMount: OnMount = useCallback((editor) => {
     editorRef.current = editor

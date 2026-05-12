@@ -1,5 +1,6 @@
 'use client'
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
+import Link from 'next/link'
 import { useParams } from 'next/navigation'
 import { CodeEditor } from '@/components/editor/CodeEditor'
 import { OutputPanel } from '@/components/editor/OutputPanel'
@@ -1352,6 +1353,10 @@ export default function LessonPage() {
   const reset = useEditorStore((s) => s.reset)
   const lesson = lessonData[slug]
 
+  useEffect(() => {
+    reset(lesson?.starterCode ?? '')
+  }, [slug, reset])
+
   if (!lesson) {
     return (
       <div className="max-w-4xl mx-auto px-4 py-16 text-center">
@@ -1384,6 +1389,17 @@ export default function LessonPage() {
       <div className={`lg:w-1/2 xl:w-3/5 border-r border-[#313244] overflow-hidden ${
         activeTab !== 'theory' ? 'hidden lg:flex' : 'flex-1'
       }`}>
+        <div className="p-3 border-b border-[#313244]">
+          <Link
+            href="/learn"
+            className="inline-flex items-center gap-1 text-sm font-mono text-[#6c7086] hover:text-[#cdd6f4] transition-colors"
+          >
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+            </svg>
+            Quay lại
+          </Link>
+        </div>
         <LessonContent content={lesson.content} title={lesson.title} />
       </div>
 
@@ -1393,7 +1409,6 @@ export default function LessonPage() {
       }`}>
         <div className="flex-1 min-h-[200px]">
           <CodeEditor
-            autoSaveKey={`lesson-${slug}`}
             onRun={handleRun}
             onReset={() => reset(lesson.starterCode)}
           />
