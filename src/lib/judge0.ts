@@ -1,10 +1,6 @@
-const PISTON_URL = process.env.NEXT_PUBLIC_PISTON_URL || process.env.PISTON_URL || 'https://emkc.org/api/v2/piston'
+const API_URL = '/api/execute'
 
-const LANGUAGE_MAP: Record<string, { language: string; version: string }> = {
-  c: { language: 'c', version: '10.2.0' },
-  cpp: { language: 'cpp', version: '10.2.0' },
-  python: { language: 'python', version: '3.10.0' },
-}
+const LANGUAGE_MAP: Record<string, number> = { c: 50, cpp: 54, python: 71 }
 
 export interface Judge0Submission {
   source_code: string
@@ -15,31 +11,31 @@ export interface Judge0Submission {
   memory_limit?: number
 }
 
-async function pistonExecute(code: string, stdin: string, language: string, timeLimit: number, memoryLimit: number) {
-  const lang = LANGUAGE_MAP[language] || LANGUAGE_MAP.c
-  const res = await fetch(`${PISTON_URL}/execute`, {
+async function executeCode(code: string, stdin: string, timeLimit: number, memoryLimit: number) {
+  const res = await fetch(API_URL, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      language: lang.language,
-      version: lang.version,
-      files: [{ name: 'main.c', content: code }],
-      stdin,
-      args: [],
-      compile_timeout: timeLimit * 1000,
-      run_timeout: timeLimit * 1000,
-      memory_limit: memoryLimit * 1000,
-    }),
+    body: JSON.stringify({ code, stdin, timeLimit, memoryLimit }),
   })
 
   if (!res.ok) {
     const text = await res.text().catch(() => '')
-    throw new Error(`Piston error ${res.status}: ${text}`)
+    throw new Error(`Server error ${res.status}: ${text}`)
   }
 
   return res.json()
 }
 
+function decodeIfBase64(s: string | null | undefined): string {
+  if (!s) return ''
+  try {
+    return Buffer.from(s, 'base64').toString('utf-8')
+  } catch {
+    return s
+  }
+}
+
+// Kept for compatibility — Piston/Judge0 token flow is no longer needed
 export async function createSubmission(
   code: string,
   stdin: string,
@@ -48,113 +44,45 @@ export async function createSubmission(
   timeLimit: number = 5,
   memoryLimit: number = 256
 ) {
-  // Piston is synchronous; return a mock token
-  const result = await pistonExecute(code, stdin, language, timeLimit, memoryLimit)
+  const result = await executeCode(code, stdin, timeLimit, memoryLimit)
   return JSON.stringify(result)
 }
 
 export async function getSubmission(token: string) {
-  const data = JSON.parse(token)
-
-  const compileOutput = data.compile?.stderr || ''
-  const runStdout = data.run?.stdout || ''
-  const runStderr = data.run?.stderr || ''
-  const exitCode = data.run?.code ?? -1
-
-  // If compile error, report as compile_output
-  if (data.compile && data.compile.code !== 0) {
-    return {
-      stdout: '',
-      stderr: '',
-      compile_output: data.compile.stderr || data.compile.output || 'Compilation error',
-      exit_code: data.compile.code,
-      time: '0',
-      memory: 0,
-      status: { id: 6, description: 'Compilation Error' },
-    }
-  }
-
-  return {
-    stdout: runStdout,
-    stderr: runStderr,
-    compile_output: compileOutput,
-    exit_code: exitCode,
-    time: '0',
-    memory: 0,
-    status: { id: exitCode === 0 ? 3 : 4, description: exitCode === 0 ? 'Accepted' : 'Wrong Answer' },
-  }
+  return JSON.parse(token)
 }
 
 export async function runCode(
   code: string,
   stdin: string = '',
-  language: string = 'c',
+  _language: string = 'c',
   timeLimit: number = 5,
   memoryLimit: number = 256
 ) {
-  const data = await pistonExecute(code, stdin, language, timeLimit, memoryLimit)
-
-  const compileOutput = data.compile?.stderr || ''
-  const runStdout = data.run?.stdout || ''
-  const runStderr = data.run?.stderr || ''
-
-  // Compile error
-  if (data.compile && data.compile.code !== 0) {
-    return {
-      stdout: '',
-      stderr: '',
-      compile_output: data.compile.stderr || data.compile.output || 'Compilation error',
-      exit_code: data.compile.code,
-      time: '0',
-      memory: 0,
-      status: { id: 6, description: 'Compilation Error' },
-    }
-  }
-
-  return {
-    stdout: runStdout,
-    stderr: runStderr,
-    compile_output: compileOutput,
-    exit_code: data.run?.code ?? 0,
-    time: '0',
-    memory: 0,
-    status: { id: 3, description: 'Accepted' },
-  }
+  return executeCode(code, stdin, timeLimit, memoryLimit)
 }
 
 export async function runTestCase(
   code: string,
   input: string,
   expectedOutput: string,
-  language: string = 'c',
+  _language: string = 'c',
   timeLimit: number = 5,
   memoryLimit: number = 256
 ) {
-  const data = await pistonExecute(code, input, language, timeLimit, memoryLimit)
+  const data = await executeCode(code, input, timeLimit, memoryLimit)
 
-  // Compile error
-  if (data.compile && data.compile.code !== 0) {
-    return {
-      passed: false,
-      actual: '',
-      stderr: data.compile.stderr || data.compile.output || 'Compilation error',
-      time: '0',
-      memory: 0,
-      status: 'CE',
-    }
-  }
-
-  const actual = (data.run?.stdout || '').trimEnd()
-  const stderr = data.run?.stderr || ''
-  const exitCode = data.run?.code ?? 0
-  const passed = actual === expectedOutput.trimEnd()
+  const actual = (data.stdout || '').trimEnd()
+  const expected = expectedOutput.trimEnd()
+  const passed = actual === expected
+  const exitCode = data.exit_code ?? 0
 
   return {
     passed,
     actual,
-    stderr,
-    time: '0',
-    memory: 0,
-    status: exitCode !== 0 ? 'RE' : passed ? 'AC' : 'WA',
+    stderr: data.stderr || data.compile_output || '',
+    time: data.time || '0',
+    memory: data.memory || 0,
+    status: exitCode === 124 ? 'TLE' : data.compile_output ? 'CE' : exitCode !== 0 ? 'RE' : passed ? 'AC' : 'WA',
   }
 }
