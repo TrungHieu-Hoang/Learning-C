@@ -1,8 +1,6 @@
 import NextAuth, { type DefaultSession } from 'next-auth'
-import { PrismaAdapter } from '@auth/prisma-adapter'
 import GoogleProvider from 'next-auth/providers/google'
 import GitHubProvider from 'next-auth/providers/github'
-import { prisma } from '@/lib/prisma'
 
 declare module 'next-auth' {
   interface Session {
@@ -11,7 +9,6 @@ declare module 'next-auth' {
 }
 
 const handler = NextAuth({
-  adapter: PrismaAdapter(prisma),
   providers: [
     ...(process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET
       ? [
