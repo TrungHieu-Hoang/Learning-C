@@ -44,7 +44,13 @@ export const problemsDetail = new Map<string, ProblemDetail>(
       constraints: p.constraints,
       sampleInput: p.sampleInput,
       sampleOutput: p.sampleOutput,
-      starterCode: p.starterCode,
+      starterCode: `#include <stdio.h>
+
+int main() {
+    // Nhap code cua ban.
+
+    return 0;
+}`,
       solution: p.solution,
       explanation: p.explanation,
       testCases: p.testCases.map((tc, i) => ({
