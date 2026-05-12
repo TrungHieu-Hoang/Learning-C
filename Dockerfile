@@ -7,7 +7,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 WORKDIR /app
 
 COPY package*.json ./
-RUN npm install
+RUN npm install && npm install -g prisma@5
 
 COPY prisma ./prisma
 RUN ./node_modules/.bin/prisma generate
@@ -17,4 +17,4 @@ RUN npm run build
 
 EXPOSE 3000
 
-CMD prisma db push --skip-generate && npm start -- -p 3000
+CMD prisma db push && npm start -- -p 3000
