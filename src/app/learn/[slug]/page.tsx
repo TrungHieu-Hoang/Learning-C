@@ -32,6 +32,8 @@ export default function LessonPage() {
   const [loading, setLoading] = useState(true)
   const { handleRun, testResults, showTestPanel, isRunning } = useJudge()
   const reset = useEditorStore((s) => s.reset)
+  const [isCompleted, setIsCompleted] = useState(false)
+  const [saving, setSaving] = useState(false)
 
   useEffect(() => {
     if (!slug) return
@@ -49,6 +51,21 @@ export default function LessonPage() {
   }, [slug])
 
   const lesson = moduleData?.lessons?.[0]
+
+  const handleComplete = async () => {
+    if (!lesson || saving) return
+    setSaving(true)
+    try {
+      const res = await fetch('/api/progress', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ lessonId: lesson.id, isCompleted: true }),
+      })
+      if (res.ok) setIsCompleted(true)
+    } finally {
+      setSaving(false)
+    }
+  }
 
   useEffect(() => {
     if (lesson?.starterCode !== undefined) {
@@ -108,6 +125,27 @@ export default function LessonPage() {
           </Link>
         </div>
         <LessonContent content={lesson.contentMd} title={lesson.title} />
+        <div className="p-4 border-t border-[#313244]">
+          {isCompleted ? (
+            <div className="flex items-center justify-between">
+              <p className="text-[#a6e3a1] font-mono text-sm">✓ Đã hoàn thành</p>
+              <Link
+                href="/learn"
+                className="px-4 py-2 rounded-lg bg-[#a6e3a1] text-[#1e1e2e] font-mono text-sm font-medium hover:bg-[#8bd88a] transition-colors"
+              >
+                Bài tiếp theo →
+              </Link>
+            </div>
+          ) : (
+            <button
+              onClick={handleComplete}
+              disabled={saving}
+              className="w-full px-4 py-2.5 rounded-lg bg-[#313244] text-[#cdd6f4] font-mono text-sm hover:bg-[#45475a] transition-colors disabled:opacity-50 border border-[#45475a]"
+            >
+              {saving ? 'Đang lưu...' : 'Đánh dấu hoàn thành'}
+            </button>
+          )}
+        </div>
       </div>
 
       {/* Right panel: Editor + Output */}

@@ -1,8 +1,12 @@
 import { NextResponse } from 'next/server'
+import { getServerSession } from 'next-auth'
 import { prisma } from '@/lib/prisma'
 
 export async function GET() {
   try {
+    const session = await getServerSession()
+    const userId = session?.user?.id
+
     const modules = await prisma.module.findMany({
       orderBy: { orderIndex: 'asc' },
       include: {
@@ -12,6 +16,24 @@ export async function GET() {
         },
       },
     })
+
+    // Compute isLocked dynamically for authenticated users
+    if (userId) {
+      const completedLessons = await prisma.userProgress.findMany({
+        where: { userId, isCompleted: true },
+        select: { lessonId: true },
+      })
+      const completedIds = new Set(completedLessons.map((c) => c.lessonId))
+
+      const modulesWithLock = modules.map((mod, index) => {
+        if (index === 0) return { ...mod, isLocked: false }
+        const prevModule = modules[index - 1]
+        const prevAllDone = prevModule.lessons.every((l) => completedIds.has(l.id))
+        return { ...mod, isLocked: !prevAllDone }
+      })
+
+      return NextResponse.json({ modules: modulesWithLock })
+    }
 
     return NextResponse.json({ modules })
   } catch (error) {
