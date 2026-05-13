@@ -1,11 +1,13 @@
 'use client'
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { useParams } from 'next/navigation'
 import Link from 'next/link'
+import { useSession } from 'next-auth/react'
 import { Card } from '@/components/ui/Card'
 import { StatsCard } from '@/components/profile/StatsCard'
 import { StreakDisplay } from '@/components/profile/StreakDisplay'
 import { BadgeDisplay } from '@/components/profile/BadgeDisplay'
+import { getRank } from '@/types'
 import { RankBadge } from '@/components/leaderboard/RankBadge'
 import { Spinner } from '@/components/ui/Spinner'
 
@@ -34,14 +36,6 @@ function getBadges(streak: number, solved: number) {
   return badges
 }
 
-function getRankLabel(xp: number): string {
-  if (xp >= 10000) return 'Master'
-  if (xp >= 5000) return 'Expert'
-  if (xp >= 2000) return 'Advanced'
-  if (xp >= 500) return 'Intermediate'
-  return 'Beginner'
-}
-
 function formatMemberSince(createdAt: string): string {
   const date = new Date(createdAt)
   const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
@@ -51,10 +45,125 @@ function formatMemberSince(createdAt: string): string {
 export default function ProfilePage() {
   const params = useParams()
   const id = params.id as string
+  const { data: session } = useSession()
 
   const [profile, setProfile] = useState<ProfileData | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(false)
+  const [avatarUploading, setAvatarUploading] = useState(false)
+  const [avatarPreview, setAvatarPreview] = useState<string | null>(null)
+  const [avatarError, setAvatarError] = useState('')
+  const [editingUsername, setEditingUsername] = useState(false)
+  const [usernameInput, setUsernameInput] = useState('')
+  const [usernameSaving, setUsernameSaving] = useState(false)
+  const [usernameError, setUsernameError] = useState('')
+  const fileInputRef = useRef<HTMLInputElement>(null)
+  const usernameInputRef = useRef<HTMLInputElement>(null)
+
+  const isOwnProfile = session?.user?.id === id
+
+  const handleAvatarClick = () => {
+    fileInputRef.current?.click()
+  }
+
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+
+    setAvatarError('')
+
+    // Validate file type
+    if (!file.type.startsWith('image/')) {
+      setAvatarError('Chỉ chấp nhận file ảnh')
+      return
+    }
+
+    // Validate file size (max 2MB)
+    if (file.size > 2 * 1024 * 1024) {
+      setAvatarError('Ảnh không được quá 2MB')
+      return
+    }
+
+    const reader = new FileReader()
+    reader.onload = (event) => {
+      setAvatarPreview(event.target?.result as string)
+    }
+    reader.readAsDataURL(file)
+  }
+
+  const handleAvatarSave = async () => {
+    if (!avatarPreview) return
+    setAvatarUploading(true)
+    setAvatarError('')
+    try {
+      const res = await fetch(`/api/users/${id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ avatar: avatarPreview }),
+      })
+      if (!res.ok) {
+        const data = await res.json()
+        throw new Error(data.error || 'Upload failed')
+      }
+      const updated = await res.json()
+      setProfile((prev) => prev ? { ...prev, avatar: updated.avatar } : prev)
+      setAvatarPreview(null)
+    } catch (err) {
+      setAvatarError(err instanceof Error ? err.message : 'Upload thất bại')
+    } finally {
+      setAvatarUploading(false)
+    }
+  }
+
+  const handleAvatarCancel = () => {
+    setAvatarPreview(null)
+    setAvatarError('')
+  }
+
+  const handleUsernameEdit = () => {
+    setUsernameInput(profile?.username || '')
+    setUsernameError('')
+    setEditingUsername(true)
+    setTimeout(() => usernameInputRef.current?.focus(), 0)
+  }
+
+  const handleUsernameSave = async () => {
+    const trimmed = usernameInput.trim()
+    if (trimmed.length < 2 || trimmed.length > 30) {
+      setUsernameError('Username phải từ 2-30 ký tự')
+      return
+    }
+    if (!/^[a-zA-Z0-9_À-ỹ ]+$/.test(trimmed)) {
+      setUsernameError('Username không được chứa ký tự đặc biệt')
+      return
+    }
+
+    setUsernameSaving(true)
+    setUsernameError('')
+    try {
+      const res = await fetch(`/api/users/${id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username: trimmed }),
+      })
+      if (!res.ok) {
+        const data = await res.json()
+        throw new Error(data.error || 'Save failed')
+      }
+      const updated = await res.json()
+      setProfile((prev) => prev ? { ...prev, username: updated.username } : prev)
+      setEditingUsername(false)
+    } catch (err) {
+      setUsernameError(err instanceof Error ? err.message : 'Lưu thất bại')
+    } finally {
+      setUsernameSaving(false)
+    }
+  }
+
+  const handleUsernameCancel = () => {
+    setEditingUsername(false)
+    setUsernameError('')
+  }
 
   useEffect(() => {
     if (!id) return
@@ -94,7 +203,6 @@ export default function ProfilePage() {
   }
 
   const badges = getBadges(profile.streak, profile.problemsSolved)
-  const rankLabel = getRankLabel(profile.xp)
   const memberSince = formatMemberSince(profile.createdAt)
   const initials = profile.username.slice(0, 2).toUpperCase()
 
@@ -104,19 +212,114 @@ export default function ProfilePage() {
         {/* Profile header */}
         <Card className="p-6 mb-6">
           <div className="flex items-center gap-4 mb-4">
-            <div className="w-16 h-16 rounded-full bg-surface0 flex items-center justify-center text-2xl font-mono font-bold text-text overflow-hidden">
-              {profile.avatar ? (
-                <img src={profile.avatar} alt="" className="w-full h-full rounded-full object-cover" />
-              ) : (
-                <span>{initials}</span>
+            <div className="relative">
+              <div
+                className={`w-16 h-16 rounded-full bg-surface0 flex items-center justify-center text-2xl font-mono font-bold text-text overflow-hidden ${
+                  isOwnProfile ? 'cursor-pointer group' : ''
+                }`}
+                onClick={isOwnProfile ? handleAvatarClick : undefined}
+              >
+                {(avatarPreview || profile.avatar) ? (
+                  <img
+                    src={avatarPreview || profile.avatar || ''}
+                    alt=""
+                    className="w-full h-full rounded-full object-cover"
+                  />
+                ) : (
+                  <span>{initials}</span>
+                )}
+                {isOwnProfile && !avatarPreview && (
+                  <div className="absolute inset-0 bg-black/50 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                    <span className="text-white text-xs font-mono">Đổi</span>
+                  </div>
+                )}
+              </div>
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/*"
+                className="hidden"
+                onChange={handleFileSelect}
+              />
+              {avatarError && (
+                <p className="text-red text-xs font-mono text-center mt-1 absolute -bottom-5 left-0 right-0">
+                  {avatarError}
+                </p>
               )}
             </div>
-            <div>
-              <h1 className="text-xl font-bold font-mono text-text">{profile.username}</h1>
+            <div className="min-w-0">
+              {editingUsername ? (
+                <div>
+                  <div className="flex items-center gap-2">
+                    <input
+                      ref={usernameInputRef}
+                      type="text"
+                      value={usernameInput}
+                      onChange={(e) => setUsernameInput(e.target.value)}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter') handleUsernameSave()
+                        if (e.key === 'Escape') handleUsernameCancel()
+                      }}
+                      maxLength={30}
+                      className="bg-surface0 border border-surface1 rounded-lg px-2 py-1 text-xl font-bold font-mono text-text outline-none focus:border-green transition-colors w-full"
+                    />
+                    <button
+                      onClick={handleUsernameSave}
+                      disabled={usernameSaving}
+                      className="shrink-0 px-2 py-1 rounded-lg bg-green text-base font-mono text-xs font-medium hover:bg-green-hover transition-colors disabled:opacity-50"
+                    >
+                      {usernameSaving ? '...' : 'Lưu'}
+                    </button>
+                    <button
+                      onClick={handleUsernameCancel}
+                      disabled={usernameSaving}
+                      className="shrink-0 px-2 py-1 rounded-lg bg-surface0 text-text font-mono text-xs hover:bg-surface1 transition-colors disabled:opacity-50 border border-surface1"
+                    >
+                      Hủy
+                    </button>
+                  </div>
+                  {usernameError && (
+                    <p className="text-red text-xs font-mono mt-1">{usernameError}</p>
+                  )}
+                </div>
+              ) : (
+                <div className="flex items-center gap-2">
+                  <h1 className="text-xl font-bold font-mono text-text truncate">{profile.username}</h1>
+                  {isOwnProfile && (
+                    <button
+                      onClick={handleUsernameEdit}
+                      className="shrink-0 p-1 rounded-lg text-overlay0 hover:text-text hover:bg-surface0 transition-colors"
+                      title="Đổi tên"
+                    >
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                      </svg>
+                    </button>
+                  )}
+                </div>
+              )}
               <div className="flex items-center gap-2 mt-1">
                 <RankBadge xp={profile.xp} />
                 <span className="text-overlay0 text-xs font-mono">· {memberSince}</span>
               </div>
+              {avatarPreview && (
+                <div className="flex items-center gap-2 mt-2">
+                  <button
+                    onClick={handleAvatarSave}
+                    disabled={avatarUploading}
+                    className="px-3 py-1 rounded-lg bg-green text-base font-mono text-xs font-medium hover:bg-green-hover transition-colors disabled:opacity-50"
+                  >
+                    {avatarUploading ? 'Đang lưu...' : 'Lưu'}
+                  </button>
+                  <button
+                    onClick={handleAvatarCancel}
+                    disabled={avatarUploading}
+                    className="px-3 py-1 rounded-lg bg-surface0 text-text font-mono text-xs hover:bg-surface1 transition-colors disabled:opacity-50 border border-surface1"
+                  >
+                    Hủy
+                  </button>
+                </div>
+              )}
             </div>
           </div>
           <div className="text-sm text-overlay0 font-mono">
@@ -128,7 +331,7 @@ export default function ProfilePage() {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
           <StatsCard title="XP" value={profile.xp.toLocaleString()} icon="⭐" />
           <StatsCard title="Bài đã giải" value={profile.problemsSolved} icon="✅" />
-          <StatsCard title="Rank" value={rankLabel} icon="🏅" />
+          <StatsCard title="Rank" value={`#${profile.rank}`} icon="🏅" subtitle={getRank(profile.xp).name} />
           <StatsCard title="Streak" value={`${profile.streak} ngày`} icon="🔥" />
         </div>
 

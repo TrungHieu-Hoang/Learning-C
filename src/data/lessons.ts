@@ -58,7 +58,8 @@ int main() {
 
     return 0;
 }`,
-      lessonType: 'theory' }]
+      lessonType: 'theory' },
+      { id: 'nhap-mon-challenge', title: 'Thực hành: Chương trình chào hỏi', contentMd: '', starterCode: '', lessonType: 'challenge' }]
   },
   {
     id: 'bien-kieu-dulieu', title: 'Biến & Kiểu dữ liệu', description: 'int, float, char, double, sizeof, khai báo và khởi tạo biến', orderIndex: 2, isLocked: true,
@@ -103,7 +104,8 @@ int main() {
 
     return 0;
 }`,
-      lessonType: 'theory' }]
+      lessonType: 'theory' },
+      { id: 'bien-kieu-dulieu-challenge', title: 'Thực hành: Bộ chuyển đổi nhiệt độ', contentMd: '', starterCode: '', lessonType: 'challenge' }]
   },
   {
     id: 'toan-tu', title: 'Toán tử', description: 'Số học, so sánh, logic, bitwise, độ ưu tiên toán tử', orderIndex: 3, isLocked: true,
@@ -141,7 +143,8 @@ int main() {
 
     return 0;
 }`,
-      lessonType: 'theory' }]
+      lessonType: 'theory' },
+      { id: 'toan-tu-challenge', title: 'Thực hành: Máy tính cơ bản', contentMd: '', starterCode: '', lessonType: 'challenge' }]
   },
   {
     id: 'dieu-kien', title: 'Điều kiện', description: 'if/else, switch-case, ternary operator, cấu trúc rẽ nhánh', orderIndex: 4, isLocked: true,
@@ -191,7 +194,8 @@ int main() {
 
     return 0;
 }`,
-      lessonType: 'theory' }]
+      lessonType: 'theory' },
+      { id: 'dieu-kien-challenge', title: 'Thực hành: Giải phương trình bậc 2', contentMd: '', starterCode: '', lessonType: 'challenge' }]
   },
   {
     id: 'vong-lap', title: 'Vòng lặp', description: 'for, while, do-while, break/continue, lồng vòng lặp', orderIndex: 5, isLocked: true,
@@ -239,7 +243,8 @@ int main() {
     }
     return 0;
 }`,
-      lessonType: 'theory' }]
+      lessonType: 'theory' },
+      { id: 'vong-lap-challenge', title: 'Thực hành: Tam giác số', contentMd: '', starterCode: '', lessonType: 'challenge' }]
   },
   {
     id: 'ham', title: 'Hàm', description: 'Khai báo hàm, tham số, return, đệ quy, function pointer', orderIndex: 6, isLocked: true,

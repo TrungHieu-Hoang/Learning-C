@@ -5,7 +5,7 @@ import { RankBadge } from './RankBadge'
 
 interface LeaderboardEntry {
   rank: number
-  userId: string
+  id: string
   username: string
   avatar: string | null
   xp: number
@@ -44,7 +44,7 @@ export function LeaderboardTable({ entries, type }: LeaderboardTableProps) {
         <tbody>
           {entries.map((entry) => (
             <tr
-              key={entry.userId}
+              key={entry.id}
               className="border-b border-surface0 hover:bg-surface0/30 transition-colors"
             >
               <td className="px-4 py-3 text-overlay0">
@@ -55,7 +55,7 @@ export function LeaderboardTable({ entries, type }: LeaderboardTableProps) {
                 )}
               </td>
               <td className="px-4 py-3">
-                <Link href={`/profile/${entry.userId}`} className="text-text hover:text-green transition-colors">
+                <Link href={`/profile/${entry.id}`} className="text-text hover:text-green transition-colors">
                   {entry.username}
                 </Link>
               </td>

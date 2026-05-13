@@ -18,6 +18,64 @@ interface CodeEditorProps {
   height?: string
 }
 
+function defineEditorThemes(monaco: any) {
+  // Mocha (Catppuccin)
+  monaco.editor.defineTheme('mocha', {
+    base: 'vs-dark',
+    inherit: true,
+    rules: [
+      { token: 'comment', foreground: '6c7086', fontStyle: 'italic' },
+      { token: 'keyword', foreground: 'cba6f7' },
+      { token: 'string', foreground: 'a6e3a1' },
+      { token: 'number', foreground: 'fab387' },
+      { token: 'type', foreground: '89b4fa' },
+      { token: 'function', foreground: '89b4fa' },
+      { token: 'predefined', foreground: 'f38ba8' },
+      { token: 'operator', foreground: '89dceb' },
+    ],
+    colors: {
+      'editor.background': '#1e1e2e',
+      'editor.foreground': '#cdd6f4',
+      'editor.lineHighlightBackground': '#313244',
+      'editor.selectionBackground': '#585b70',
+      'editor.inactiveSelectionBackground': '#45475a',
+      'editorCursor.foreground': '#f5e0dc',
+      'editorLineNumber.foreground': '#585b70',
+      'editorLineNumber.activeForeground': '#a6adc8',
+      'editorIndentGuide.background': '#313244',
+      'editorIndentGuide.activeBackground': '#45475a',
+    },
+  })
+
+  // Ocean (GitHub Dark)
+  monaco.editor.defineTheme('ocean', {
+    base: 'vs-dark',
+    inherit: true,
+    rules: [
+      { token: 'comment', foreground: '8b949e', fontStyle: 'italic' },
+      { token: 'keyword', foreground: 'ff7b72' },
+      { token: 'string', foreground: 'a5d6ff' },
+      { token: 'number', foreground: '79c0ff' },
+      { token: 'type', foreground: 'ffa657' },
+      { token: 'function', foreground: 'd2a8ff' },
+      { token: 'predefined', foreground: 'ffa657' },
+      { token: 'operator', foreground: 'ff7b72' },
+    ],
+    colors: {
+      'editor.background': '#0d1117',
+      'editor.foreground': '#e6edf3',
+      'editor.lineHighlightBackground': '#161b22',
+      'editor.selectionBackground': '#264f78',
+      'editor.inactiveSelectionBackground': '#1f3a5a',
+      'editorCursor.foreground': '#e6edf3',
+      'editorLineNumber.foreground': '#484f58',
+      'editorLineNumber.activeForeground': '#8b949e',
+      'editorIndentGuide.background': '#21262d',
+      'editorIndentGuide.activeBackground': '#30363d',
+    },
+  })
+}
+
 export function CodeEditor({
   readOnly = false,
   onRun,
@@ -27,12 +85,19 @@ export function CodeEditor({
   showActions = true,
   height = '100%',
 }: CodeEditorProps) {
-  const { code, setCode, fontSize, isRunning, isSubmitting } = useEditorStore()
+  const { code, setCode, fontSize, fontFamily, isRunning, isSubmitting } = useEditorStore()
   const appTheme = useThemeStore((s) => s.theme)
-  const monacoTheme = appTheme === 'latte' ? 'light' : 'vs-dark'
   const editorRef = useRef<Parameters<OnMount>[0] | null>(null)
 
-  const handleMount: OnMount = useCallback((editor) => {
+  const themeMap: Record<string, string> = {
+    mocha: 'mocha',
+    latte: 'light',
+    ocean: 'ocean',
+  }
+  const monacoTheme = themeMap[appTheme] || 'vs-dark'
+
+  const handleMount: OnMount = useCallback((editor, monaco) => {
+    defineEditorThemes(monaco)
     editorRef.current = editor
     editor.focus()
   }, [])
@@ -46,6 +111,9 @@ export function CodeEditor({
     },
     [onRun]
   )
+
+  const fontFamilyValue =
+    fontFamily === 'monospace' ? 'monospace' : `${fontFamily}, "Fira Code", monospace`
 
   return (
     <div className="flex flex-col h-full" onKeyDown={handleKeyDown}>
@@ -78,6 +146,7 @@ export function CodeEditor({
       </div>
       <div className="flex-1 min-h-0">
         <Monaco
+          key={`${monacoTheme}-${fontFamily}-${fontSize}`}
           height={height === '100%' ? undefined : height}
           defaultLanguage="c"
           theme={monacoTheme}
@@ -86,7 +155,7 @@ export function CodeEditor({
           onMount={handleMount}
           options={{
             fontSize,
-            fontFamily: '"JetBrains Mono", "Fira Code", monospace',
+            fontFamily: fontFamilyValue,
             fontLigatures: true,
             minimap: { enabled: false },
             lineNumbers: 'on',

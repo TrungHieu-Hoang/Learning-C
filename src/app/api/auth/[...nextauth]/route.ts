@@ -39,17 +39,26 @@ const handler = NextAuth({
       if (account?.provider === 'google' || account?.provider === 'github') {
         const email = user.email
         if (!email) return false
-        const name = (profile as any)?.name || user.name || email.split('@')[0]
         try {
-          await prisma.user.upsert({
-            where: { email },
-            update: { avatar: user.image, username: name.replace(/\s+/g, '_').toLowerCase() },
-            create: {
-              email,
-              username: name.replace(/\s+/g, '_').toLowerCase(),
-              avatar: user.image,
-            },
-          })
+          const existing = await prisma.user.findUnique({ where: { email } })
+
+          if (existing) {
+            // Existing user — update avatar only, keep username unchanged
+            await prisma.user.update({
+              where: { email },
+              data: { avatar: user.image },
+            })
+          } else {
+            // New user — username là tên hiển thị, không cần unique
+            const displayName = (profile as any)?.name || user.name || email.split('@')[0]
+            await prisma.user.create({
+              data: {
+                email,
+                username: displayName.replace(/\s+/g, '_').toLowerCase(),
+                avatar: user.image,
+              },
+            })
+          }
         } catch {
           // DB not available — proceed without creating user record
         }

@@ -17,11 +17,12 @@ export default function LearnPage() {
   const modules = modulesData
   const [completed] = useState(getCompleted)
 
-  // Compute isLocked dynamically: module N unlocks when ALL lessons in module N-1 are done
+  // Compute isLocked: module N unlocks when ALL lessons in module N-1 are done
+  // Compute progress for each module
   const modulesWithLock = modules.map((mod, i) => {
-    if (i === 0) return { ...mod, isLocked: false }
-    const prevLessonId = modules[i - 1].lessons[0]?.id
-    return { ...mod, isLocked: !completed.includes(prevLessonId) }
+    const completedCount = mod.lessons.filter((l) => completed.includes(l.id)).length
+    const isUnlocked = i === 0 || modules[i - 1].lessons.every((l) => completed.includes(l.id))
+    return { ...mod, isLocked: !isUnlocked, completedCount }
   })
 
   return (
@@ -31,7 +32,7 @@ export default function LearnPage() {
         <p className="text-subtext0 text-sm font-mono mb-4">
           {modules.length} module từ cơ bản đến nâng cao
         </p>
-        <ProgressBar value={completed.length} max={modules.length} size="lg" />
+        <ProgressBar value={completed.length} max={modules.reduce((sum, m) => sum + m.lessons.length, 0)} size="lg" />
       </div>
 
       <div className="grid sm:grid-cols-2 gap-4">
@@ -44,8 +45,8 @@ export default function LearnPage() {
             lessonCount={mod.lessons.length}
             orderIndex={i + 1}
             isLocked={mod.isLocked}
-            completed={completed.includes(mod.lessons[0]?.id)}
-            progress={0}
+            completedCount={mod.completedCount}
+            firstLessonId={mod.lessons[0]?.id || mod.id}
           />
         ))}
       </div>

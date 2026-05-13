@@ -16,6 +16,7 @@ export async function POST(request: Request) {
       where: { userId_lessonId: { userId, lessonId } },
     })
 
+    const wasAlreadyCompleted = existing?.isCompleted === true
     let progress
     if (existing) {
       progress = await prisma.userProgress.update({
@@ -38,7 +39,18 @@ export async function POST(request: Request) {
       })
     }
 
-    return NextResponse.json({ success: true, progress })
+    // Award XP when newly completed (not already completed before)
+    let xpEarned = 0
+    if (isCompleted && !wasAlreadyCompleted) {
+      const isChallenge = lessonId.endsWith('-challenge')
+      xpEarned = isChallenge ? 50 : 10
+      await prisma.user.update({
+        where: { id: userId },
+        data: { xp: { increment: xpEarned } },
+      })
+    }
+
+    return NextResponse.json({ success: true, progress, xpEarned })
   } catch (error) {
     const message = error instanceof Error ? error.message : 'Internal server error'
     return NextResponse.json({ error: message }, { status: 500 })

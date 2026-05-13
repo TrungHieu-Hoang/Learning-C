@@ -1,13 +1,38 @@
 'use client'
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { LeaderboardTable } from '@/components/leaderboard/LeaderboardTable'
+import { Spinner } from '@/components/ui/Spinner'
 import { Card } from '@/components/ui/Card'
 
-const mockGlobal: never[] = []
-const mockWeekly: never[] = []
+interface LeaderboardEntry {
+  rank: number
+  id: string
+  username: string
+  avatar: string | null
+  xp: number
+  xpThisWeek: number
+  problemsSolved: number
+  streak: number
+}
 
 export default function LeaderboardPage() {
   const [type, setType] = useState<'global' | 'weekly'>('global')
+  const [entries, setEntries] = useState<LeaderboardEntry[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(false)
+
+  useEffect(() => {
+    setLoading(true)
+    setError(false)
+    fetch(`/api/leaderboard?type=${type}`)
+      .then((r) => {
+        if (!r.ok) throw new Error('Failed to fetch')
+        return r.json()
+      })
+      .then((data) => setEntries(data.entries || []))
+      .catch(() => setError(true))
+      .finally(() => setLoading(false))
+  }, [type])
 
   return (
     <div className="max-w-4xl mx-auto px-4 py-8">
@@ -23,7 +48,7 @@ export default function LeaderboardPage() {
           onClick={() => setType('global')}
           className={`px-4 py-2 rounded-lg text-sm font-mono transition-colors ${
             type === 'global'
-              ? 'bg-green text-base font-medium'
+              ? 'bg-green font-medium'
               : 'bg-surface0 text-subtext0 hover:bg-surface1'
           }`}
         >
@@ -33,7 +58,7 @@ export default function LeaderboardPage() {
           onClick={() => setType('weekly')}
           className={`px-4 py-2 rounded-lg text-sm font-mono transition-colors ${
             type === 'weekly'
-              ? 'bg-green text-base font-medium'
+              ? 'bg-green font-medium'
               : 'bg-surface0 text-subtext0 hover:bg-surface1'
           }`}
         >
@@ -42,7 +67,17 @@ export default function LeaderboardPage() {
       </div>
 
       <Card className="overflow-hidden">
-        <LeaderboardTable entries={type === 'global' ? mockGlobal : mockWeekly} type={type} />
+        {loading ? (
+          <div className="flex items-center justify-center py-12">
+            <Spinner />
+          </div>
+        ) : error ? (
+          <div className="text-center py-12">
+            <p className="text-red font-mono text-sm">Không thể tải dữ liệu</p>
+          </div>
+        ) : (
+          <LeaderboardTable entries={entries} type={type} />
+        )}
       </Card>
     </div>
   )
