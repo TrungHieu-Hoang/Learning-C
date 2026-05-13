@@ -11,6 +11,7 @@ import { useEditorStore } from '@/store/editorStore'
 import { modulesData } from '@/data/lessons'
 import { challengeData } from '@/data/challenges'
 import { Spinner } from '@/components/ui/Spinner'
+import { useSession } from 'next-auth/react'
 
 export default function LessonPage() {
   const params = useParams()
@@ -18,20 +19,27 @@ export default function LessonPage() {
   const [activeTab, setActiveTab] = useState<'theory' | 'editor' | 'result'>('theory')
   const { handleRun, handleTestCases, testResults, showTestPanel, isRunning } = useJudge()
   const reset = useEditorStore((s) => s.reset)
-  const [isCompleted, setIsCompleted] = useState(() => {
-    // Check localStorage on init (fallback for unauthenticated users)
-    try {
-      const done = JSON.parse(localStorage.getItem('completed') || '[]')
-      return done.includes(slug)
-    } catch {
-      return false
-    }
-  })
+  const [isCompleted, setIsCompleted] = useState(false)
   const [saving, setSaving] = useState(false)
   const [submitting, setSubmitting] = useState(false)
   const [submitError, setSubmitError] = useState('')
 
   const router = useRouter()
+  const { data: session } = useSession()
+
+  // Fetch completion status from API when authenticated
+  useEffect(() => {
+    if (!session?.user?.id || !activeLesson) return
+    fetch(`/api/progress`)
+      .then((r) => r.json())
+      .then((data) => {
+        const found = (data.progress || []).find(
+          (p: any) => p.lessonId === activeLesson.id
+        )
+        if (found?.isCompleted) setIsCompleted(true)
+      })
+      .catch(() => {})
+  }, [session?.user?.id, activeLesson?.id])
 
   // Resolve slug: could be module ID or lesson ID
   let moduleData = modulesData.find((m) => m.id === slug) ?? null
@@ -71,11 +79,6 @@ export default function LessonPage() {
     if (!activeLesson || saving) return
     setSaving(true)
     setIsCompleted(true)
-    const done = JSON.parse(localStorage.getItem('completed') || '[]')
-    if (!done.includes(activeLesson.id)) {
-      done.push(activeLesson.id)
-      localStorage.setItem('completed', JSON.stringify(done))
-    }
     try {
       await fetch('/api/progress', {
         method: 'POST',
@@ -101,11 +104,6 @@ export default function LessonPage() {
     if (allPassed) {
       // Auto-complete on success
       setIsCompleted(true)
-      const done = JSON.parse(localStorage.getItem('completed') || '[]')
-      if (!done.includes(challengeInfo.id)) {
-        done.push(challengeInfo.id)
-        localStorage.setItem('completed', JSON.stringify(done))
-      }
       try {
         await fetch('/api/progress', {
           method: 'POST',

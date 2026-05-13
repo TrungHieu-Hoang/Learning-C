@@ -47,6 +47,34 @@ function defineEditorThemes(monaco: any) {
     },
   })
 
+  // Latte (Catppuccin light)
+  monaco.editor.defineTheme('latte', {
+    base: 'vs',
+    inherit: true,
+    rules: [
+      { token: 'comment', foreground: '8a8d99', fontStyle: 'italic' },
+      { token: 'keyword', foreground: '8839ef' },
+      { token: 'string', foreground: '40a02b' },
+      { token: 'number', foreground: 'fe640b' },
+      { token: 'type', foreground: '1e66f5' },
+      { token: 'function', foreground: '1e66f5' },
+      { token: 'predefined', foreground: 'd20f39' },
+      { token: 'operator', foreground: '04a5e5' },
+    ],
+    colors: {
+      'editor.background': '#d6d8dd',
+      'editor.foreground': '#3a3b48',
+      'editor.lineHighlightBackground': '#c8cad0',
+      'editor.selectionBackground': '#abafb9',
+      'editor.inactiveSelectionBackground': '#babdc5',
+      'editorCursor.foreground': '#3a3b48',
+      'editorLineNumber.foreground': '#abafb9',
+      'editorLineNumber.activeForeground': '#8a8d99',
+      'editorIndentGuide.background': '#c8cad0',
+      'editorIndentGuide.activeBackground': '#abafb9',
+    },
+  })
+
   // Ocean (GitHub Dark)
   monaco.editor.defineTheme('ocean', {
     base: 'vs-dark',
@@ -91,7 +119,7 @@ export function CodeEditor({
 
   const themeMap: Record<string, string> = {
     mocha: 'mocha',
-    latte: 'light',
+    latte: 'latte',
     ocean: 'ocean',
   }
   const monacoTheme = themeMap[appTheme] || 'vs-dark'
@@ -117,7 +145,7 @@ export function CodeEditor({
 
   return (
     <div className="flex flex-col h-full" onKeyDown={handleKeyDown}>
-      <div className="flex items-center justify-between px-3 py-1.5 bg-mantle border-b border-surface0">
+      <div className="flex items-center justify-between px-3 py-1.5 bg-base border-b border-surface0">
         <span className="text-xs text-overlay0 font-mono">main.c</span>
         {showActions && (
           <div className="flex items-center gap-1.5">
