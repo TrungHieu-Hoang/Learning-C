@@ -36,4 +36,4 @@ COPY --from=builder /app/node_modules/@prisma ./node_modules/@prisma
 
 EXPOSE 3000
 
-CMD npx prisma db push --skip-generate && node prisma/seed.mjs && node server.js
+CMD npx --no-install prisma db push --schema=prisma/schema.prisma --accept-data-loss --skip-generate && node prisma/seed.mjs && node server.js
