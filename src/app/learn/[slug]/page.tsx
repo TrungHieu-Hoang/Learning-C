@@ -27,20 +27,6 @@ export default function LessonPage() {
   const router = useRouter()
   const { data: session } = useSession()
 
-  // Fetch completion status from API when authenticated
-  useEffect(() => {
-    if (!session?.user?.id || !activeLesson) return
-    fetch(`/api/progress`)
-      .then((r) => r.json())
-      .then((data) => {
-        const found = (data.progress || []).find(
-          (p: any) => p.lessonId === activeLesson.id
-        )
-        if (found?.isCompleted) setIsCompleted(true)
-      })
-      .catch(() => {})
-  }, [session?.user?.id, activeLesson?.id])
-
   // Resolve slug: could be module ID or lesson ID
   let moduleData = modulesData.find((m) => m.id === slug) ?? null
   let currentLesson
@@ -74,6 +60,20 @@ export default function LessonPage() {
       reset(activeLesson.starterCode)
     }
   }, [slug, activeLesson?.starterCode, challengeInfo, reset])
+
+  // Fetch completion status from API when authenticated
+  useEffect(() => {
+    if (!session?.user?.id || !activeLesson) return
+    fetch(`/api/progress`)
+      .then((r) => r.json())
+      .then((data) => {
+        const found = (data.progress || []).find(
+          (p: any) => p.lessonId === activeLesson.id
+        )
+        if (found?.isCompleted) setIsCompleted(true)
+      })
+      .catch(() => {})
+  }, [session?.user?.id, slug])
 
   const handleComplete = async () => {
     if (!activeLesson || saving) return
