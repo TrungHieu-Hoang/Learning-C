@@ -1,24 +1,36 @@
 'use client'
-import React, { useState, useMemo } from 'react'
+import React, { useState, useMemo, useEffect } from 'react'
 import { ProblemCard } from '@/components/problems/ProblemCard'
 import { ProblemFilters } from '@/components/problems/ProblemFilters'
 import { problemsList } from '@/data/problems'
 import type { Difficulty } from '@/types'
-
-function getProblemStatus(): Record<string, 'solved' | 'attempted'> {
-  if (typeof window === 'undefined') return {}
-  try {
-    return JSON.parse(localStorage.getItem('problemStatus') || '{}')
-  } catch {
-    return {}
-  }
-}
+import { useSession } from 'next-auth/react'
 
 export default function ProblemsPage() {
+  const { data: session, status } = useSession()
   const [difficulty, setDifficulty] = useState<Difficulty | 'all'>('all')
   const [source, setSource] = useState<string | 'all'>('all')
   const [search, setSearch] = useState('')
-  const [statusMap, setStatusMap] = useState<Record<string, 'solved' | 'attempted'>>(getProblemStatus)
+  const [statusMap, setStatusMap] = useState<Record<string, 'solved' | 'attempted'>>({})
+
+  // Fetch problem status from API when authenticated
+  useEffect(() => {
+    if (status !== 'authenticated') {
+      setStatusMap({})
+      return
+    }
+    fetch('/api/submissions')
+      .then((r) => r.json())
+      .then((subs: any[]) => {
+        const map: Record<string, 'solved' | 'attempted'> = {}
+        for (const s of subs) {
+          if (s.status === 'AC') map[s.problemId] = 'solved'
+          else if (!map[s.problemId]) map[s.problemId] = 'attempted'
+        }
+        setStatusMap(map)
+      })
+      .catch(() => setStatusMap({}))
+  }, [status])
 
   const filtered = useMemo(() => {
     let list = problemsList
@@ -35,12 +47,6 @@ export default function ProblemsPage() {
     hard: problemsList.filter((p) => p.difficulty === 'hard').length,
   }), [])
 
-  // Listen for status changes from other tabs
-  React.useEffect(() => {
-    const handler = () => setStatusMap(getProblemStatus())
-    window.addEventListener('storage', handler)
-    return () => window.removeEventListener('storage', handler)
-  }, [])
 
   return (
     <div className="max-w-5xl mx-auto px-4 py-8">
