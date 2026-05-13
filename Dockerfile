@@ -31,9 +31,10 @@ COPY --from=builder /app/.next/standalone ./
 COPY --from=builder /app/.next/static ./.next/static
 COPY --from=builder /app/prisma ./prisma
 COPY --from=builder /app/public ./public
+COPY --from=builder /app/scripts ./scripts
 COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma
 COPY --from=builder /app/node_modules/@prisma ./node_modules/@prisma
 
 EXPOSE 3000
 
-CMD npx --no-install prisma db push --schema=prisma/schema.prisma --accept-data-loss --skip-generate && node prisma/seed.mjs && node server.js
+CMD node scripts/start.mjs

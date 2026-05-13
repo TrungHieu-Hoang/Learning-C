@@ -4,8 +4,8 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "npx prisma generate && next build",
-    "start": "npx --no-install prisma db push --schema=prisma/schema.prisma --accept-data-loss --skip-generate && node prisma/seed.mjs && next start",
+    "build": "npx prisma generate && next build && node scripts/copy-prisma.js",
+    "start": "node scripts/start.mjs",
     "lint": "eslint"
   },
   "dependencies": {
