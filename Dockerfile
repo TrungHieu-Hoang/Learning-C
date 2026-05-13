@@ -33,10 +33,7 @@ COPY --from=builder /app/prisma ./prisma
 COPY --from=builder /app/public ./public
 COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma
 COPY --from=builder /app/node_modules/@prisma ./node_modules/@prisma
-COPY --from=builder /app/node_modules/prisma ./node_modules/prisma
-COPY --from=builder /app/node_modules/tsx ./node_modules/tsx
-COPY --from=builder /app/node_modules/.bin ./node_modules/.bin
 
 EXPOSE 3000
 
-CMD npx --no-install prisma db push --skip-generate && npx --no-install tsx prisma/seed.ts && node server.js
+CMD npx prisma db push --skip-generate && node prisma/seed.mjs && node server.js
