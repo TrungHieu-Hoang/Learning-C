@@ -1,8 +1,15 @@
 import { NextAuthOptions, type DefaultSession } from 'next-auth'
+import type { JWT } from 'next-auth/jwt'
 
 declare module 'next-auth' {
   interface Session {
     user: { id: string } & DefaultSession['user']
+  }
+}
+
+declare module 'next-auth/jwt' {
+  interface JWT {
+    id?: string
   }
 }
 import GoogleProvider from 'next-auth/providers/google'
@@ -49,10 +56,21 @@ export const authOptions: NextAuthOptions = {
             })
           } else {
             const displayName = (profile as any)?.name || user.name || email.split('@')[0]
+            let username = displayName.replace(/\s+/g, '_').toLowerCase()
+
+            // Ensure unique username by appending number if taken
+            const existingUsername = await prisma.user.findFirst({
+              where: { username },
+            })
+            if (existingUsername) {
+              const suffix = Date.now().toString(36).slice(-4)
+              username = `${username}_${suffix}`
+            }
+
             await prisma.user.create({
               data: {
                 email,
-                username: displayName.replace(/\s+/g, '_').toLowerCase(),
+                username,
                 avatar: user.image,
               },
             })
@@ -63,8 +81,46 @@ export const authOptions: NextAuthOptions = {
       }
       return true
     },
+    async jwt({ token, trigger }) {
+      // Populate token.id from DB whenever it's missing (handles both initial sign-in
+      // where signIn callback hasn't run yet, and subsequent requests)
+      if (!token.id && token.email) {
+        try {
+          const dbUser = await prisma.user.findUnique({
+            where: { email: token.email },
+            select: { id: true },
+          })
+          if (dbUser) {
+            token.id = dbUser.id
+          }
+        } catch {
+          // DB not available — session callback handles fallback
+        }
+      }
+
+      // Refresh on explicit update trigger (e.g. after profile update)
+      if (trigger === 'update' && token.email) {
+        try {
+          const dbUser = await prisma.user.findUnique({
+            where: { email: token.email },
+            select: { id: true },
+          })
+          if (dbUser) {
+            token.id = dbUser.id
+          }
+        } catch {
+          // keep existing token.id
+        }
+      }
+
+      return token
+    },
     async session({ session, token }) {
-      if (session.user?.email) {
+      if (token.id) {
+        // Use ID from JWT token (most reliable — set by jwt callback)
+        session.user.id = token.id
+      } else if (session.user?.email) {
+        // Fallback: look up by email
         try {
           const dbUser = await prisma.user.findUnique({
             where: { email: session.user.email },
