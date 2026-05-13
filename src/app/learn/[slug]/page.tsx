@@ -18,7 +18,15 @@ export default function LessonPage() {
   const [activeTab, setActiveTab] = useState<'theory' | 'editor' | 'result'>('theory')
   const { handleRun, handleTestCases, testResults, showTestPanel, isRunning } = useJudge()
   const reset = useEditorStore((s) => s.reset)
-  const [isCompleted, setIsCompleted] = useState(false)
+  const [isCompleted, setIsCompleted] = useState(() => {
+    // Check localStorage on init (fallback for unauthenticated users)
+    try {
+      const done = JSON.parse(localStorage.getItem('completed') || '[]')
+      return done.includes(slug)
+    } catch {
+      return false
+    }
+  })
   const [saving, setSaving] = useState(false)
   const [submitting, setSubmitting] = useState(false)
   const [submitError, setSubmitError] = useState('')

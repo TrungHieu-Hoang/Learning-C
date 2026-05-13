@@ -7,7 +7,7 @@ import { Suspense } from 'react'
 function SignInForm() {
   const searchParams = useSearchParams()
   const error = searchParams.get('error')
-  const callbackUrl = searchParams.get('callbackUrl') || '/learn'
+  const callbackUrl = searchParams.get('callbackUrl') || '/'
 
   const [loading, setLoading] = useState<'google' | 'github' | null>(null)
 

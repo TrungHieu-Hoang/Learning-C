@@ -1,10 +1,11 @@
 'use client'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { useSession } from 'next-auth/react'
 import { ModuleCard } from '@/components/learn/ModuleCard'
 import { ProgressBar } from '@/components/learn/ProgressBar'
 import { modulesData } from '@/data/lessons'
 
-function getCompleted(): string[] {
+function getLocalCompleted(): string[] {
   if (typeof window === 'undefined') return []
   try {
     return JSON.parse(localStorage.getItem('completed') || '[]')
@@ -15,15 +16,53 @@ function getCompleted(): string[] {
 
 export default function LearnPage() {
   const modules = modulesData
-  const [completed] = useState(getCompleted)
+  const { data: session, status } = useSession()
+  const [completed, setCompleted] = useState<string[]>([])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    if (status === 'loading') return
+
+    if (status === 'authenticated') {
+      // Fetch progress from API (per-user, stored in DB)
+      fetch('/api/progress')
+        .then((r) => r.json())
+        .then((data) => {
+          const ids = (data.progress || [])
+            .filter((p: any) => p.isCompleted)
+            .map((p: any) => p.lessonId)
+          setCompleted(ids)
+        })
+        .catch(() => {
+          // Fall back to localStorage if API fails
+          setCompleted(getLocalCompleted())
+        })
+        .finally(() => setLoading(false))
+    } else {
+      // Unauthenticated — use localStorage only
+      setCompleted(getLocalCompleted())
+      setLoading(false)
+    }
+  }, [status])
 
   // Compute isLocked: module N unlocks when ALL lessons in module N-1 are done
-  // Compute progress for each module
   const modulesWithLock = modules.map((mod, i) => {
     const completedCount = mod.lessons.filter((l) => completed.includes(l.id)).length
     const isUnlocked = i === 0 || modules[i - 1].lessons.every((l) => completed.includes(l.id))
     return { ...mod, isLocked: !isUnlocked, completedCount }
   })
+
+  const totalLessons = modules.reduce((sum, m) => sum + m.lessons.length, 0)
+
+  if (loading) {
+    return (
+      <div className="max-w-5xl mx-auto px-4 py-8">
+        <div className="flex items-center justify-center py-20">
+          <div className="w-8 h-8 border-2 border-overlay0 border-t-transparent rounded-full animate-spin" />
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className="max-w-5xl mx-auto px-4 py-8">
@@ -32,7 +71,7 @@ export default function LearnPage() {
         <p className="text-subtext0 text-sm font-mono mb-4">
           {modules.length} module từ cơ bản đến nâng cao
         </p>
-        <ProgressBar value={completed.length} max={modules.reduce((sum, m) => sum + m.lessons.length, 0)} size="lg" />
+        <ProgressBar value={completed.length} max={totalLessons} size="lg" />
       </div>
 
       <div className="grid sm:grid-cols-2 gap-4">

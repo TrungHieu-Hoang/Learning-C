@@ -67,7 +67,7 @@ export function AuthButton() {
               Trang cá nhân
             </Link>
             <button
-              onClick={() => signOut()}
+              onClick={() => signOut({ callbackUrl: '/' })}
               className="w-full text-left px-4 py-2 text-sm font-mono text-red hover:bg-surface0 transition-colors"
             >
               Đăng xuất

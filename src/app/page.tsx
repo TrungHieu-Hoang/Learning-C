@@ -1,17 +1,10 @@
 import Link from 'next/link'
 import { modulesData } from '@/data/lessons'
-
-function getModuleList() {
-  return modulesData.map((m) => ({ id: m.id, title: m.title }))
-}
-
-function getTotalLessons(): number {
-  return modulesData.reduce((sum, m) => sum + m.lessons.length, 0)
-}
+import { problemsList } from '@/data/problems'
 
 export default function LandingPage() {
-  const modules = getModuleList()
-  const problemCount = getTotalLessons()
+  const modules = modulesData
+  const problemCount = problemsList.length
   return (
     <div className="max-w-6xl mx-auto px-4 py-16 md:py-24">
       {/* Hero */}
@@ -48,7 +41,7 @@ export default function LandingPage() {
 
       {/* Features */}
       <section className="grid md:grid-cols-3 gap-6 mb-20">
-        {getFeatures(modules.length).map((f, i) => (
+        {getFeatures(modules.length, problemCount).map((f, i) => (
           <div
             key={i}
             className="bg-mantle border border-surface0 rounded-xl p-6 hover:border-surface1 transition-all animate-slide-in"
@@ -67,14 +60,24 @@ export default function LandingPage() {
           Lộ trình <span className="text-green">{modules.length} module</span>
         </h2>
         <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-4">
-          {modules.map((mod, i) => (
-            <Link key={mod.id} href={`/learn/${mod.id}`}>
-              <div className="bg-mantle border border-surface0 rounded-lg p-4 hover:border-surface1 transition-all">
-                <span className="text-xs text-overlay0 font-mono">Module {i + 1}</span>
-                <h3 className="text-text text-sm font-medium mt-1 font-mono">{mod.title}</h3>
-              </div>
-            </Link>
-          ))}
+          {modules.map((mod, i) => {
+            const firstLessonId = mod.lessons[0]?.id || mod.id
+            return (
+              <Link key={mod.id} href={mod.isLocked ? '/learn' : `/learn/${firstLessonId}`} className={mod.isLocked ? 'opacity-50' : ''}>
+                <div className={`bg-mantle border border-surface0 rounded-lg p-4 transition-all ${mod.isLocked ? '' : 'hover:border-surface1'}`}>
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs text-overlay0 font-mono">Module {i + 1}</span>
+                    {mod.isLocked ? (
+                      <span className="text-overlay0 text-xs">🔒</span>
+                    ) : (
+                      <span className="text-xs text-overlay0 font-mono">{mod.lessons.length} bài</span>
+                    )}
+                  </div>
+                  <h3 className="text-text text-sm font-medium mt-1 font-mono">{mod.title}</h3>
+                </div>
+              </Link>
+            )
+          })}
         </div>
       </section>
 
@@ -98,7 +101,7 @@ export default function LandingPage() {
   )
 }
 
-function getFeatures(modCount: number) {
+function getFeatures(modCount: number, problemCount: number) {
   return [
     {
       icon: '⚡',
@@ -108,7 +111,7 @@ function getFeatures(modCount: number) {
     {
       icon: '🎯',
       title: 'Bài tập đa dạng',
-      description: `${getTotalLessons()} bài tập với hệ thống test case public/hidden, chấm điểm tự động.`,
+      description: `${problemCount} bài tập với hệ thống test case public/hidden, chấm điểm tự động.`,
     },
     {
       icon: '🏆',
