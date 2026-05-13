@@ -16,7 +16,7 @@ export const metadata: Metadata = {
   title: 'C_Learn - Học lập trình C',
   description: 'Nền tảng học lập trình C toàn diện với IDE tích hợp, bài tập HackerRank và gamification',
   icons: {
-    icon: '/logo.svg',
+    icon: '/logo.png',
   },
 }
 

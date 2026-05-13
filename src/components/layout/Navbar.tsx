@@ -17,7 +17,7 @@ export function Navbar() {
     <nav className="bg-mantle border-b border-surface0 sticky top-0 z-40">
       <div className="max-w-7xl mx-auto px-4 h-14 flex items-center justify-between">
         <Link href="/" className="flex items-center gap-2 group">
-          <img src="/logo.svg" alt="C_Learn" className="w-7 h-7" />
+          <img src="/logo.png" alt="C_Learn" className="w-7 h-7" />
           <span className="text-green text-xl font-bold font-mono group-hover:brightness-110 transition-all">
             C_Learn
           </span>
