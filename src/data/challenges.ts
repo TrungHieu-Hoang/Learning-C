@@ -37,19 +37,7 @@ Xin chao, Nguyen Van A! Ban 19 tuoi.
 \`\`\`
 
 > **Gợi ý:** Dùng \`printf\` và \`scanf\` với \`%[^\\n]\` để đọc chuỗi có khoảng trắng.`,
-  starterCode: `#include <stdio.h>
-
-int main() {
-    // Khai bao bien
-
-    // Nhap ten
-
-    // Nhap tuoi
-
-    // In loi chao
-
-    return 0;
-}`,
+  starterCode: '',
   testCases: [
     {
       input: 'Nguyen Van A\n19\n',
@@ -103,23 +91,7 @@ Output:
 \`\`\`
 
 > **Gợi ý:** Dùng \`%.2f\` để in số thực với 2 chữ số thập phân. Chú ý kiểu dữ liệu \`float\` hoặc \`double\`.`,
-  starterCode: `#include <stdio.h>
-
-int main() {
-    char type;
-    float value, result;
-
-    // Nhap loai nhiet do
-    scanf("%c", &type);
-    // Nhap gia tri
-    scanf("%f", &value);
-
-    // Xu ly chuyen doi
-
-    // In ket qua
-
-    return 0;
-}`,
+  starterCode: '',
   testCases: [
     {
       input: 'C\n100\n',
@@ -176,21 +148,7 @@ Output:
 \`\`\`
 
 > **Gợi ý:** Dùng \`switch-case\` để xử lý từng phép toán. Chú ý kiểm tra chia cho 0.`,
-  starterCode: `#include <stdio.h>
-
-int main() {
-    float a, b, result;
-    char op;
-
-    // Nhap du lieu
-    scanf("%f", &a);
-    scanf("%f", &b);
-    scanf(" %c", &op);  // Chu y khoang trang truoc %c
-
-    // Xu ly phep toan
-
-    return 0;
-}`,
+  starterCode: '',
   testCases: [
     {
       input: '10\n3\n/\n',
@@ -251,20 +209,10 @@ Output:
 x1 = 2.00, x2 = 1.00
 \`\`\`
 
-> **Gợi ý:** \`delta = b*b - 4*a*c\`. Dùng \`sqrt()\` từ \`<math.h>\`. Nhớ thêm \`-lm\` khi compile.`,
-  starterCode: `#include <stdio.h>
-#include <math.h>
+> **Gợi ý:** \`delta = b*b - 4*a*c\`. Dùng \`sqrt()\` từ \`<math.h>\`. Nhớ thêm \`-lm\` khi compile.
 
-int main() {
-    float a, b, c, delta, x1, x2;
-
-    // Nhap a, b, c
-    scanf("%f %f %f", &a, &b, &c);
-
-    // Giai phuong trinh
-
-    return 0;
-}`,
+> **Chú ý:** Nhớ \`#include <math.h>\` để dùng \`sqrt()\`. Khi compile cần flag \`-lm\`.`,
+  starterCode: '',
   testCases: [
     {
       input: '1 -3 2\n',
@@ -336,18 +284,7 @@ Output:
 \`\`\`
 
 > **Gợi ý:** Dùng vòng lặp lồng nhau. Biến đếm tăng dần từ 1.`,
-  starterCode: `#include <stdio.h>
-
-int main() {
-    int n, count = 1;
-
-    // Nhap n
-    scanf("%d", &n);
-
-    // In tam giac so
-
-    return 0;
-}`,
+  starterCode: '',
   testCases: [
     {
       input: '4\n',

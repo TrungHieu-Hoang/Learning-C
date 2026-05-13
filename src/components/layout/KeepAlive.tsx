@@ -9,11 +9,7 @@ export function KeepAlive() {
   // Ping server every 5 minutes to prevent backend sleep (Render/Railway free tier)
   useEffect(() => {
     const ping = () => {
-      fetch('/api/streak', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ lastActive: new Date().toISOString() }),
-      }).catch(() => {
+      fetch('/api/health').catch(() => {
         // Silent fail — keep-alive is best-effort
       })
     }

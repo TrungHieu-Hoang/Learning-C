@@ -1,33 +1,17 @@
 import Link from 'next/link'
+import { modulesData } from '@/data/lessons'
 
-const allModules = [
-  { id: 'nhap-mon', title: 'Nhập môn C' },
-  { id: 'bien-kieu-dulieu', title: 'Biến & Kiểu dữ liệu' },
-  { id: 'toan-tu', title: 'Toán tử' },
-  { id: 'dieu-kien', title: 'Điều kiện' },
-  { id: 'vong-lap', title: 'Vòng lặp' },
-  { id: 'ham', title: 'Hàm' },
-  { id: 'mang', title: 'Mảng' },
-  { id: 'chuoi', title: 'Chuỗi' },
-  { id: 'con-tro', title: 'Con trỏ' },
-  { id: 'struct-union', title: 'Struct & Union' },
-  { id: 'file-io', title: 'File I/O' },
-  { id: 'thuat-toan', title: 'Thuật toán' },
-  { id: 'de-quy', title: 'Đệ quy chuyên sâu' },
-  { id: 'cap-phat-dong', title: 'Cấp phát bộ nhớ động' },
-  { id: 'preprocessor', title: 'Preprocessor & Macro' },
-  { id: 'cau-truc-du-lieu', title: 'Cấu trúc dữ liệu' },
-  { id: 'con-tro-nang-cao', title: 'Con trỏ nâng cao' },
-  { id: 'thu-vien-chuan', title: 'Thư viện chuẩn C' },
-  { id: 'lap-trinh-he-thong', title: 'Lập trình hệ thống' },
-  { id: 'bitwise-nang-cao', title: 'Thao tác bit nâng cao' },
-  { id: 'debug-toi-uu', title: 'Debug & Tối ưu' },
-  { id: 'thiet-ke-chuong-trinh', title: 'Thiết kế chương trình' },
-]
+function getModuleList() {
+  return modulesData.map((m) => ({ id: m.id, title: m.title }))
+}
+
+function getTotalLessons(): number {
+  return modulesData.reduce((sum, m) => sum + m.lessons.length, 0)
+}
 
 export default function LandingPage() {
-  const modules = allModules
-  const problemCount = 58
+  const modules = getModuleList()
+  const problemCount = getTotalLessons()
   return (
     <div className="max-w-6xl mx-auto px-4 py-16 md:py-24">
       {/* Hero */}
@@ -124,7 +108,7 @@ function getFeatures(modCount: number) {
     {
       icon: '🎯',
       title: 'Bài tập đa dạng',
-      description: '50+ bài tập với hệ thống test case public/hidden, chấm điểm tự động.',
+      description: `${getTotalLessons()} bài tập với hệ thống test case public/hidden, chấm điểm tự động.`,
     },
     {
       icon: '🏆',

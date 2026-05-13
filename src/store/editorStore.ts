@@ -79,7 +79,7 @@ export const useEditorStore = create<EditorState>((set) => ({
   toggleTheme: () => set((s) => ({ theme: s.theme === 'vs-dark' ? 'light' : 'vs-dark' })),
   reset: (starterCode) =>
     set({
-      code: starterCode || DEFAULT_CODE,
+      code: starterCode ?? DEFAULT_CODE,
       output: '',
       error: '',
       stdin: '',

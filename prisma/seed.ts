@@ -7,15 +7,12 @@ const prisma = new PrismaClient()
 async function main() {
   console.log('🌱 Starting seed...')
 
-  // Clear existing data in correct order (respecting foreign keys)
-  await prisma.testCase.deleteMany()
-  await prisma.submission.deleteMany()
-  await prisma.userProgress.deleteMany()
-  await prisma.leaderboardWeekly.deleteMany()
-  await prisma.problem.deleteMany()
-  await prisma.lesson.deleteMany()
-  await prisma.module.deleteMany()
-  console.log('  ✓ Cleared existing data')
+  // Skip if already seeded (non-destructive — keeps user data on restart)
+  const existing = await prisma.module.count()
+  if (existing > 0) {
+    console.log('  ✓ Data already exists, skipping seed')
+    return
+  }
 
   // Create modules
   const modulesData = [
@@ -71,6 +68,29 @@ async function main() {
     })
   }
   console.log(`  ✓ Created ${lessons.length} lessons`)
+
+  // Create challenge lessons for the first 5 modules
+  const challengeLessons = [
+    { id: 'nhap-mon-challenge', moduleId: 'nhap-mon', title: 'Thực hành: Chương trình chào hỏi', orderIndex: 2 },
+    { id: 'bien-kieu-dulieu-challenge', moduleId: 'bien-kieu-dulieu', title: 'Thực hành: Bộ chuyển đổi nhiệt độ', orderIndex: 2 },
+    { id: 'toan-tu-challenge', moduleId: 'toan-tu', title: 'Thực hành: Máy tính cơ bản', orderIndex: 2 },
+    { id: 'dieu-kien-challenge', moduleId: 'dieu-kien', title: 'Thực hành: Giải phương trình bậc 2', orderIndex: 2 },
+    { id: 'vong-lap-challenge', moduleId: 'vong-lap', title: 'Thực hành: Tam giác số', orderIndex: 2 },
+  ]
+  for (const cl of challengeLessons) {
+    await prisma.lesson.create({
+      data: {
+        id: cl.id,
+        moduleId: cl.moduleId,
+        title: cl.title,
+        contentMd: '',
+        starterCode: '',
+        orderIndex: cl.orderIndex,
+        lessonType: 'challenge',
+      },
+    })
+  }
+  console.log(`  ✓ Created ${challengeLessons.length} challenge lessons`)
 
   // Create problems and test cases
   for (const problem of problems) {

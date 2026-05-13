@@ -71,14 +71,17 @@ export async function POST(req: NextRequest) {
     } catch (runErr: unknown) {
       const err = runErr as any
       if (err.killed || err.signal) {
+        const isSigsegv = err.signal === 'SIGSEGV'
         return NextResponse.json({
           stdout: err.stdout?.toString() || '',
-          stderr: 'Time Limit Exceeded',
+          stderr: isSigsegv ? 'Segmentation Fault (core dumped)' : 'Time Limit Exceeded',
           compile_output: '',
-          exit_code: 124,
-          time: timeLimit.toString(),
+          exit_code: isSigsegv ? 139 : 124,
+          time: isSigsegv ? '0' : timeLimit.toString(),
           memory: 0,
-          status: { id: 5, description: 'Time Limit Exceeded' },
+          status: isSigsegv
+            ? { id: 11, description: 'SIGSEGV' }
+            : { id: 5, description: 'Time Limit Exceeded' },
         })
       }
       return NextResponse.json({

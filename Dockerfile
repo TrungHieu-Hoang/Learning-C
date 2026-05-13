@@ -7,7 +7,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 WORKDIR /app
 
 COPY package*.json ./
-RUN npm install
+RUN npm ci
 
 COPY prisma ./prisma
 RUN npx prisma generate
@@ -33,9 +33,10 @@ COPY --from=builder /app/prisma ./prisma
 COPY --from=builder /app/public ./public
 COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma
 COPY --from=builder /app/node_modules/@prisma ./node_modules/@prisma
-
-RUN npm install prisma@5 tsx --no-save
+COPY --from=builder /app/node_modules/prisma ./node_modules/prisma
+COPY --from=builder /app/node_modules/tsx ./node_modules/tsx
+COPY --from=builder /app/node_modules/.bin ./node_modules/.bin
 
 EXPOSE 3000
 
-CMD npx prisma db push --skip-generate && npx tsx prisma/seed.ts && node server.js
+CMD npx --no-install prisma db push --skip-generate && npx --no-install tsx prisma/seed.ts && node server.js

@@ -1,16 +1,35 @@
 import { NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth'
+import { authOptions } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 import { checkStreak } from '@/lib/streak'
 
 export async function POST(request: Request) {
   try {
-    const session = await getServerSession()
+    const session = await getServerSession(authOptions)
     if (!session?.user?.id) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    const { problemId, code, status, runtimeMs, memoryKb, xpEarned } = await request.json()
+    const { problemId, code, status, runtimeMs, memoryKb } = await request.json()
+
+    // Server-side XP calculation — don't trust client
+    let finalXp = 0
+    if (status === 'AC') {
+      const problem = await prisma.problem.findUnique({
+        where: { id: problemId },
+        select: { difficulty: true },
+      })
+      if (problem) {
+        const xpMap: Record<string, number> = { easy: 30, medium: 50, hard: 100 }
+        const baseXp = xpMap[problem.difficulty] || 30
+        // Only award XP on first AC
+        const existingAc = await prisma.submission.findFirst({
+          where: { userId: session.user.id, problemId, status: 'AC' },
+        })
+        if (!existingAc) finalXp = baseXp
+      }
+    }
 
     const submission = await prisma.$transaction(async (tx) => {
       // 1. Create submission
@@ -22,15 +41,15 @@ export async function POST(request: Request) {
           status,
           runtimeMs: runtimeMs || 0,
           memoryKb: memoryKb || 0,
-          xpEarned: xpEarned || 0,
+          xpEarned: finalXp,
         },
       })
 
       // 2. Update user XP
-      if (xpEarned > 0) {
+      if (finalXp > 0) {
         await tx.user.update({
           where: { id: session.user.id },
-          data: { xp: { increment: xpEarned } },
+          data: { xp: { increment: finalXp } },
         })
       }
 
@@ -59,7 +78,7 @@ export async function POST(request: Request) {
       }
 
       // 4. Update weekly XP
-      if (xpEarned > 0) {
+      if (finalXp > 0) {
         const now = new Date()
         const day = now.getDay()
         const diff = now.getDate() - day + (day === 0 ? -6 : 1)
@@ -73,10 +92,10 @@ export async function POST(request: Request) {
           create: {
             userId: session.user.id,
             weekStart,
-            xpThisWeek: xpEarned,
+            xpThisWeek: finalXp,
           },
           update: {
-            xpThisWeek: { increment: xpEarned },
+            xpThisWeek: { increment: finalXp },
           },
         })
       }
@@ -93,13 +112,16 @@ export async function POST(request: Request) {
 
 export async function GET(request: Request) {
   try {
+    const session = await getServerSession(authOptions)
+    if (!session?.user?.id) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+
     const { searchParams } = new URL(request.url)
     const problemId = searchParams.get('problemId')
-    const userId = searchParams.get('userId')
 
-    const where: Record<string, string> = {}
+    const where: Record<string, string> = { userId: session.user.id }
     if (problemId) where.problemId = problemId
-    if (userId) where.userId = userId
 
     const submissions = await prisma.submission.findMany({
       where,
