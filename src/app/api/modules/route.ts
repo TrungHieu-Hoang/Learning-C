@@ -18,20 +18,11 @@ export async function GET() {
       },
     })
 
-    // Compute isLocked dynamically for authenticated users
     if (userId) {
-      const completedLessons = await prisma.userProgress.findMany({
-        where: { userId, isCompleted: true },
-        select: { lessonId: true },
-      })
-      const completedIds = new Set(completedLessons.map((c) => c.lessonId))
-
-      const modulesWithLock = modules.map((mod, index) => {
-        if (index === 0) return { ...mod, isLocked: false }
-        const prevModule = modules[index - 1]
-        const prevAllDone = prevModule.lessons.every((l) => completedIds.has(l.id))
-        return { ...mod, isLocked: !prevAllDone }
-      })
+      const modulesWithLock = modules.map((mod) => ({
+        ...mod,
+        isLocked: false,
+      }))
 
       return NextResponse.json({ modules: modulesWithLock })
     }

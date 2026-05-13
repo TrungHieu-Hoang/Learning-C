@@ -129,7 +129,7 @@ async function main() {
         title: mod.title,
         description: mod.description,
         orderIndex: mod.orderIndex,
-        isLocked: mod.id !== 'nhap-mon',
+        isLocked: false,
       },
     })
   }

@@ -44,7 +44,7 @@ interface EditorState {
   reset: (starterCode?: string) => void
 }
 
-const DEFAULT_CODE = `#include <stdio.h>\n\nint main() {\n    printf("Hello, World!\\n");\n    return 0;\n}`
+const DEFAULT_CODE = `#include <stdio.h>\n\nint main() {\n    // Nhap code cua ban.\n\n    return 0;\n}`
 
 const initial = loadSettings()
 

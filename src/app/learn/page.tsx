@@ -6,12 +6,7 @@ import { ProgressBar } from '@/components/learn/ProgressBar'
 import { modulesData } from '@/data/lessons'
 
 function getLocalCompleted(): string[] {
-  if (typeof window === 'undefined') return []
-  try {
-    return JSON.parse(localStorage.getItem('completed') || '[]')
-  } catch {
-    return []
-  }
+  return []
 }
 
 export default function LearnPage() {
@@ -34,8 +29,7 @@ export default function LearnPage() {
           setCompleted(ids)
         })
         .catch(() => {
-          // Fall back to localStorage if API fails
-          setCompleted(getLocalCompleted())
+          setCompleted([])
         })
         .finally(() => setLoading(false))
     } else {
@@ -48,8 +42,7 @@ export default function LearnPage() {
   // Compute isLocked: module N unlocks when ALL lessons in module N-1 are done
   const modulesWithLock = modules.map((mod, i) => {
     const completedCount = mod.lessons.filter((l) => completed.includes(l.id)).length
-    const isUnlocked = i === 0 || modules[i - 1].lessons.every((l) => completed.includes(l.id))
-    return { ...mod, isLocked: !isUnlocked, completedCount }
+    return { ...mod, isLocked: false, completedCount }
   })
 
   const totalLessons = modules.reduce((sum, m) => sum + m.lessons.length, 0)

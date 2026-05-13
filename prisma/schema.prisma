@@ -3,12 +3,12 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "mongodb"
   url      = env("DATABASE_URL")
 }
 
 model User {
-  id           String   @id @default(cuid())
+  id           String   @id @default(auto()) @map("_id") @db.ObjectId
   username     String   @unique
   email        String   @unique
   passwordHash String?
@@ -26,8 +26,8 @@ model User {
 }
 
 model Account {
-  id                String  @id @default(cuid())
-  userId            String
+  id                String  @id @default(auto()) @map("_id") @db.ObjectId
+  userId            String  @db.ObjectId
   type              String
   provider          String
   providerAccountId String
@@ -39,20 +39,21 @@ model Account {
   id_token          String?
   session_state     String?
 
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id])
 
   @@unique([provider, providerAccountId])
 }
 
 model Session {
-  id           String   @id @default(cuid())
+  id           String   @id @default(auto()) @map("_id") @db.ObjectId
   sessionToken String   @unique
-  userId       String
+  userId       String   @db.ObjectId
   expires      DateTime
-  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user         User     @relation(fields: [userId], references: [id])
 }
 
 model VerificationToken {
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
   identifier String
   token      String   @unique
   expires    DateTime
@@ -61,7 +62,7 @@ model VerificationToken {
 }
 
 model Module {
-  id          String   @id @default(cuid())
+  id          String   @id @map("_id")
   title       String
   description String
   orderIndex  Int
@@ -72,7 +73,7 @@ model Module {
 }
 
 model Lesson {
-  id          String     @id @default(cuid())
+  id          String     @id @map("_id")
   moduleId    String
   title       String
   contentMd   String
@@ -86,7 +87,7 @@ model Lesson {
 }
 
 model Problem {
-  id           String   @id @default(cuid())
+  id           String   @id @map("_id")
   lessonId     String
   source       String   @default("custom") // custom, hackerrank
   title        String
@@ -109,7 +110,7 @@ model Problem {
 }
 
 model TestCase {
-  id              String @id @default(cuid())
+  id              String @id @default(auto()) @map("_id") @db.ObjectId
   problemId       String
   input           String @default("")
   expectedOutput  String
@@ -120,8 +121,8 @@ model TestCase {
 }
 
 model Submission {
-  id          String   @id @default(cuid())
-  userId      String
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId      String   @db.ObjectId
   problemId   String
   code        String
   language    String   @default("c")
@@ -136,8 +137,8 @@ model Submission {
 }
 
 model UserProgress {
-  id          String    @id @default(cuid())
-  userId      String
+  id          String    @id @default(auto()) @map("_id") @db.ObjectId
+  userId      String    @db.ObjectId
   lessonId    String
   isCompleted Boolean   @default(false)
   completedAt DateTime?
@@ -150,8 +151,8 @@ model UserProgress {
 }
 
 model LeaderboardWeekly {
-  id          String   @id @default(cuid())
-  userId      String
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId      String   @db.ObjectId
   weekStart   DateTime
   xpThisWeek  Int      @default(0)
 

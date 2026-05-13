@@ -62,7 +62,7 @@ int main() {
       { id: 'nhap-mon-challenge', title: 'Thực hành: Chương trình chào hỏi', contentMd: '', starterCode: '', lessonType: 'challenge' }]
   },
   {
-    id: 'bien-kieu-dulieu', title: 'Biến & Kiểu dữ liệu', description: 'int, float, char, double, sizeof, khai báo và khởi tạo biến', orderIndex: 2, isLocked: true,
+    id: 'bien-kieu-dulieu', title: 'Biến & Kiểu dữ liệu', description: 'int, float, char, double, sizeof, khai báo và khởi tạo biến', orderIndex: 2, isLocked: false,
     lessons: [{ id: 'bien-kieu-dulieu', title: 'Module 2: Biến & Kiểu dữ liệu', contentMd: `## Biến trong C
 
 Biến dùng để lưu trữ dữ liệu trong bộ nhớ.
@@ -108,7 +108,7 @@ int main() {
       { id: 'bien-kieu-dulieu-challenge', title: 'Thực hành: Bộ chuyển đổi nhiệt độ', contentMd: '', starterCode: '', lessonType: 'challenge' }]
   },
   {
-    id: 'toan-tu', title: 'Toán tử', description: 'Số học, so sánh, logic, bitwise, độ ưu tiên toán tử', orderIndex: 3, isLocked: true,
+    id: 'toan-tu', title: 'Toán tử', description: 'Số học, so sánh, logic, bitwise, độ ưu tiên toán tử', orderIndex: 3, isLocked: false,
     lessons: [{ id: 'toan-tu', title: 'Module 3: Toán tử', contentMd: `## Toán tử trong C
 
 ### Toán tử số học
@@ -147,7 +147,7 @@ int main() {
       { id: 'toan-tu-challenge', title: 'Thực hành: Máy tính cơ bản', contentMd: '', starterCode: '', lessonType: 'challenge' }]
   },
   {
-    id: 'dieu-kien', title: 'Điều kiện', description: 'if/else, switch-case, ternary operator, cấu trúc rẽ nhánh', orderIndex: 4, isLocked: true,
+    id: 'dieu-kien', title: 'Điều kiện', description: 'if/else, switch-case, ternary operator, cấu trúc rẽ nhánh', orderIndex: 4, isLocked: false,
     lessons: [{ id: 'dieu-kien', title: 'Module 4: Điều kiện', contentMd: `## Câu lệnh điều kiện trong C
 
 ### if / else
@@ -198,7 +198,7 @@ int main() {
       { id: 'dieu-kien-challenge', title: 'Thực hành: Giải phương trình bậc 2', contentMd: '', starterCode: '', lessonType: 'challenge' }]
   },
   {
-    id: 'vong-lap', title: 'Vòng lặp', description: 'for, while, do-while, break/continue, lồng vòng lặp', orderIndex: 5, isLocked: true,
+    id: 'vong-lap', title: 'Vòng lặp', description: 'for, while, do-while, break/continue, lồng vòng lặp', orderIndex: 5, isLocked: false,
     lessons: [{ id: 'vong-lap', title: 'Module 5: Vòng lặp', contentMd: `## Vòng lặp trong C
 
 ### for
@@ -247,7 +247,7 @@ int main() {
       { id: 'vong-lap-challenge', title: 'Thực hành: Tam giác số', contentMd: '', starterCode: '', lessonType: 'challenge' }]
   },
   {
-    id: 'ham', title: 'Hàm', description: 'Khai báo hàm, tham số, return, đệ quy, function pointer', orderIndex: 6, isLocked: true,
+    id: 'ham', title: 'Hàm', description: 'Khai báo hàm, tham số, return, đệ quy, function pointer', orderIndex: 6, isLocked: false,
     lessons: [{ id: 'ham', title: 'Module 6: Hàm', contentMd: `## Hàm trong C
 
 ### Khai báo hàm
@@ -300,7 +300,7 @@ int main() {
       lessonType: 'theory' }]
   },
   {
-    id: 'mang', title: 'Mảng', description: '1D array, 2D array, thao tác cơ bản, truyền mảng vào hàm', orderIndex: 7, isLocked: true,
+    id: 'mang', title: 'Mảng', description: '1D array, 2D array, thao tác cơ bản, truyền mảng vào hàm', orderIndex: 7, isLocked: false,
     lessons: [{ id: 'mang', title: 'Module 7: Mảng', contentMd: `## Mảng trong C
 
 ### Mảng 1 chiều
@@ -348,7 +348,7 @@ int main() {
       lessonType: 'theory' }]
   },
   {
-    id: 'chuoi', title: 'Chuỗi', description: 'string.h, scanf/gets, xử lý ký tự, các hàm xử lý chuỗi', orderIndex: 8, isLocked: true,
+    id: 'chuoi', title: 'Chuỗi', description: 'string.h, scanf/gets, xử lý ký tự, các hàm xử lý chuỗi', orderIndex: 8, isLocked: false,
     lessons: [{ id: 'chuoi', title: 'Module 8: Chuỗi', contentMd: `## Chuỗi trong C
 
 ### Khai báo chuỗi
@@ -399,7 +399,7 @@ int main() {
       lessonType: 'theory' }]
   },
   {
-    id: 'con-tro', title: 'Con trỏ', description: 'Địa chỉ, dereference, pointer arithmetic, con trỏ và mảng', orderIndex: 9, isLocked: true,
+    id: 'con-tro', title: 'Con trỏ', description: 'Địa chỉ, dereference, pointer arithmetic, con trỏ và mảng', orderIndex: 9, isLocked: false,
     lessons: [{ id: 'con-tro', title: 'Module 9: Con trỏ', contentMd: `## Con trỏ trong C
 
 ### Khai báo và sử dụng
@@ -458,7 +458,7 @@ int main() {
       lessonType: 'theory' }]
   },
   {
-    id: 'struct-union', title: 'Struct & Union', description: 'Khai báo struct, union, typedef, nested struct', orderIndex: 10, isLocked: true,
+    id: 'struct-union', title: 'Struct & Union', description: 'Khai báo struct, union, typedef, nested struct', orderIndex: 10, isLocked: false,
     lessons: [{ id: 'struct-union', title: 'Module 10: Struct & Union', contentMd: `## Struct trong C
 
 ### Khai báo struct
@@ -517,7 +517,7 @@ int main() {
       lessonType: 'theory' }]
   },
   {
-    id: 'file-io', title: 'File I/O', description: 'fopen, fread, fwrite, fclose, đọc ghi file nhị phân', orderIndex: 11, isLocked: true,
+    id: 'file-io', title: 'File I/O', description: 'fopen, fread, fwrite, fclose, đọc ghi file nhị phân', orderIndex: 11, isLocked: false,
     lessons: [{ id: 'file-io', title: 'Module 11: File I/O', contentMd: `## Thao tác với file trong C
 
 ### Mở file
@@ -575,7 +575,7 @@ int main() {
       lessonType: 'theory' }]
   },
   {
-    id: 'thuat-toan', title: 'Thuật toán', description: 'Sort, search, đệ quy nâng cao, độ phức tạp', orderIndex: 12, isLocked: true,
+    id: 'thuat-toan', title: 'Thuật toán', description: 'Sort, search, đệ quy nâng cao, độ phức tạp', orderIndex: 12, isLocked: false,
     lessons: [{ id: 'thuat-toan', title: 'Module 12: Thuật toán', contentMd: `## Thuật toán cơ bản trong C
 
 ### Sắp xếp nổi bọt (Bubble Sort)
@@ -647,7 +647,7 @@ int main() {
       lessonType: 'theory' }]
   },
   {
-    id: 'de-quy', title: 'Đệ quy chuyên sâu', description: 'Quay lui, chia để trị, nhánh cận, đệ quy có nhớ', orderIndex: 13, isLocked: true,
+    id: 'de-quy', title: 'Đệ quy chuyên sâu', description: 'Quay lui, chia để trị, nhánh cận, đệ quy có nhớ', orderIndex: 13, isLocked: false,
     lessons: [{ id: 'de-quy', title: 'Module 13: Đệ quy chuyên sâu', contentMd: `## Đệ quy nâng cao
 
 ### Đệ quy quay lui (Backtracking)
@@ -717,7 +717,7 @@ int main() {
       lessonType: 'theory' }]
   },
   {
-    id: 'cap-phat-dong', title: 'Cấp phát bộ nhớ động', description: 'malloc, calloc, realloc, free, memory leak, valgrind', orderIndex: 14, isLocked: true,
+    id: 'cap-phat-dong', title: 'Cấp phát bộ nhớ động', description: 'malloc, calloc, realloc, free, memory leak, valgrind', orderIndex: 14, isLocked: false,
     lessons: [{ id: 'cap-phat-dong', title: 'Module 14: Cấp phát bộ nhớ động', contentMd: `## Cấp phát bộ nhớ động
 
 ### malloc - Cấp phát bộ nhớ
@@ -777,7 +777,7 @@ int main() {
       lessonType: 'theory' }]
   },
   {
-    id: 'preprocessor', title: 'Preprocessor & Macro', description: '#define, #ifdef, #include, #pragma, macro function', orderIndex: 15, isLocked: true,
+    id: 'preprocessor', title: 'Preprocessor & Macro', description: '#define, #ifdef, #include, #pragma, macro function', orderIndex: 15, isLocked: false,
     lessons: [{ id: 'preprocessor', title: 'Module 15: Preprocessor & Macro', contentMd: `## Preprocessor trong C
 
 ### #define - Định nghĩa hằng và macro
@@ -839,7 +839,7 @@ int main() {
       lessonType: 'theory' }]
   },
   {
-    id: 'cau-truc-du-lieu', title: 'Cấu trúc dữ liệu', description: 'Stack, Queue, Linked List, Tree, Binary Search Tree', orderIndex: 16, isLocked: true,
+    id: 'cau-truc-du-lieu', title: 'Cấu trúc dữ liệu', description: 'Stack, Queue, Linked List, Tree, Binary Search Tree', orderIndex: 16, isLocked: false,
     lessons: [{ id: 'cau-truc-du-lieu', title: 'Module 16: Cấu trúc dữ liệu', contentMd: `## Cấu trúc dữ liệu trong C
 
 ### Stack (Ngăn xếp) - LIFO
@@ -917,7 +917,7 @@ int main() {
       lessonType: 'theory' }]
   },
   {
-    id: 'con-tro-nang-cao', title: 'Con trỏ nâng cao', description: 'Function pointer, void pointer, con trỏ cấp 2, callback', orderIndex: 17, isLocked: true,
+    id: 'con-tro-nang-cao', title: 'Con trỏ nâng cao', description: 'Function pointer, void pointer, con trỏ cấp 2, callback', orderIndex: 17, isLocked: false,
     lessons: [{ id: 'con-tro-nang-cao', title: 'Module 17: Con trỏ nâng cao', contentMd: `## Con trỏ nâng cao
 
 ### Function Pointer (Con trỏ hàm)
@@ -986,7 +986,7 @@ int main() {
       lessonType: 'theory' }]
   },
   {
-    id: 'thu-vien-chuan', title: 'Thư viện chuẩn C', description: 'math.h, stdlib.h, time.h, string.h, assert.h, setjmp.h', orderIndex: 18, isLocked: true,
+    id: 'thu-vien-chuan', title: 'Thư viện chuẩn C', description: 'math.h, stdlib.h, time.h, string.h, assert.h, setjmp.h', orderIndex: 18, isLocked: false,
     lessons: [{ id: 'thu-vien-chuan', title: 'Module 18: Thư viện chuẩn C', contentMd: `## Thư viện chuẩn C
 
 ### stdlib.h - Hàm tiện ích
@@ -1053,7 +1053,7 @@ int main() {
       lessonType: 'theory' }]
   },
   {
-    id: 'lap-trinh-he-thong', title: 'Lập trình hệ thống', description: 'argc/argv, environment, file system, process, signal', orderIndex: 19, isLocked: true,
+    id: 'lap-trinh-he-thong', title: 'Lập trình hệ thống', description: 'argc/argv, environment, file system, process, signal', orderIndex: 19, isLocked: false,
     lessons: [{ id: 'lap-trinh-he-thong', title: 'Module 19: Lập trình hệ thống', contentMd: `## Lập trình hệ thống với C
 
 ### argc và argv - Đối số dòng lệnh
@@ -1115,7 +1115,7 @@ int main(int argc, char *argv[]) {
       lessonType: 'theory' }]
   },
   {
-    id: 'bitwise-nang-cao', title: 'Thao tác bit nâng cao', description: 'Bit mask, set/clear/toggle, endianness, checksum, flag', orderIndex: 20, isLocked: true,
+    id: 'bitwise-nang-cao', title: 'Thao tác bit nâng cao', description: 'Bit mask, set/clear/toggle, endianness, checksum, flag', orderIndex: 20, isLocked: false,
     lessons: [{ id: 'bitwise-nang-cao', title: 'Module 20: Thao tác bit nâng cao', contentMd: `## Thao tác bit nâng cao
 
 ### Bit Mask - Mặt nạ bit
@@ -1197,7 +1197,7 @@ int main() {
       lessonType: 'theory' }]
   },
   {
-    id: 'debug-toi-uu', title: 'Debug & Tối ưu', description: 'gdb, assert, profiling, inline, restrict, align, cache', orderIndex: 21, isLocked: true,
+    id: 'debug-toi-uu', title: 'Debug & Tối ưu', description: 'gdb, assert, profiling, inline, restrict, align, cache', orderIndex: 21, isLocked: false,
     lessons: [{ id: 'debug-toi-uu', title: 'Module 21: Debug & Tối ưu', contentMd: `## Debug và Tối ưu trong C
 
 ### assert - Kiểm tra điều kiện
@@ -1283,7 +1283,7 @@ int main() {
       lessonType: 'theory' }]
   },
   {
-    id: 'thiet-ke-chuong-trinh', title: 'Thiết kế chương trình', description: 'Modular, header files, makefile, static/shared library', orderIndex: 22, isLocked: true,
+    id: 'thiet-ke-chuong-trinh', title: 'Thiết kế chương trình', description: 'Modular, header files, makefile, static/shared library', orderIndex: 22, isLocked: false,
     lessons: [{ id: 'thiet-ke-chuong-trinh', title: 'Module 22: Thiết kế chương trình', contentMd: `## Thiết kế chương trình C
 
 ### Module hóa - Chia file

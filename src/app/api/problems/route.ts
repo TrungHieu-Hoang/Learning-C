@@ -12,9 +12,9 @@ export async function GET(request: Request) {
     const where: Prisma.ProblemWhereInput = {}
     if (difficulty && difficulty !== 'all') where.difficulty = difficulty
     if (source && source !== 'all') where.source = source
-    if (search) where.title = { contains: search, mode: 'insensitive' }
+    if (search) where.title = { contains: search }
 
-    const problems = await prisma.problem.findMany({
+    let problems = await prisma.problem.findMany({
       where,
       orderBy: { createdAt: 'asc' },
       include: {
@@ -23,6 +23,12 @@ export async function GET(request: Request) {
         },
       },
     })
+
+    // MongoDB Prisma doesn't support mode: 'insensitive', so filter in JS
+    if (search) {
+      const q = search.toLowerCase()
+      problems = problems.filter((p) => p.title.toLowerCase().includes(q))
+    }
 
     return NextResponse.json({ problems, filters: { difficulty, source } })
   } catch (error) {
